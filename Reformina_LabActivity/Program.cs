@@ -1,38 +1,81 @@
 ﻿using Raylib_cs;
 using System;
 using System.Collections.Generic;
+using System.Numerics; 
 
 class Program
 {
     static void Main()
     {
-        // Initialize the window
         Raylib.InitWindow(800, 600, "Insaniquarium Clone");
         Raylib.SetTargetFPS(60);
 
-        // Load background texture
-        Texture2D background = Raylib.LoadTexture("Fishking/Fishbg.png");
+        // Background
+        Texture2D bg = Raylib.LoadTexture("Fishking/Fishbg.png");
 
-        // Main game loop
+        // Money system
+        int money = 0;
+        List<Fish> fishes = new List<Fish>();
+        List<Coin> coins = new List<Coin>();
+
+        // Start with one fish
+        fishes.Add(new BasicFish(400, 300));
+
         while (!Raylib.WindowShouldClose())
         {
-            // --- Update game logic here ---
-            // (handle fish movement, input, coins, etc.)
+            // --- Update ---
+            // Check keypress to buy fish (inside loop so it reacts each frame)
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_ONE) && money >= 50)
+            {
+                fishes.Add(new BasicFish(100, 200));
+                money -= 50;
+            }
+
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_TWO) && money >= 150)
+            {
+                fishes.Add(new CarnivoreFish(200, 300));
+                money -= 150;
+            }
+
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_THREE) && money >= 150)
+            {
+                fishes.Add(new CarnivoreFish(200, 300));
+                money -= 150;
+            }
+
+            // Update fish and coins
+            foreach (var fish in fishes) fish.Update(coins);
+            foreach (var coin in coins) coin.Update();
+
+            // Mouse click: check for coins
+            if (Raylib.IsMouseButtonPressed(MouseButton.MouseLeftButton))
+            {
+                Vector2 mouse = Raylib.GetMousePosition();
+                for (int i = coins.Count - 1; i >= 0; i--)
+                {
+                    if (coins[i].IsClicked(mouse))
+                    {
+                        money += coins[i].Value;
+                        coins.RemoveAt(i);
+                    }
+                }
+            }
 
             // --- Draw ---
             Raylib.BeginDrawing();
-            
-            // Draw the background texture starting at (0,0)
-            Raylib.DrawTexture(background, 0, 0, Color.White);
+            Raylib.ClearBackground(Color.Black);
 
-            // Optional: Draw some text on top
-            Raylib.DrawText("Insaniquarium Clone", 10, 10, 20, Color.White);
+            Raylib.DrawTexture(bg, 0, 0, Color.White);
+
+            foreach (var fish in fishes) fish.Draw();
+            foreach (var coin in coins) coin.Draw();
+
+            // HUD
+            Raylib.DrawText($"Money: {money}", 10, 10, 20, Color.Yellow);
 
             Raylib.EndDrawing();
         }
 
-        // Unload texture and close window
-        Raylib.UnloadTexture(background);
         Raylib.CloseWindow();
     }
 }
