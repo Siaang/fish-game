@@ -6,7 +6,7 @@ class BasicFish : Fish
 {
     private float coinTimer = 0;
 
-    public BasicFish(float startX, float startY) : base("assets/fish_basic.png", startX, startY) {}
+    public BasicFish(float startX, float startY) : base("Fishking/bluefin.png", startX, startY) {}
 
     public override void Update(List<Coin> coins)
     {
@@ -24,7 +24,7 @@ class BasicFish : Fish
 
 class CarnivoreFish : Fish
 {
-    public CarnivoreFish(float startX, float startY) : base("assets/fish_carnivore.png", startX, startY) {}
+    public CarnivoreFish(float startX, float startY) : base("Fishking/snapper.png", startX, startY) {}
 
     public override void Update(List<Coin> coins)
     {

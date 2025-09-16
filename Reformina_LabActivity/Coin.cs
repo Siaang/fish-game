@@ -11,7 +11,7 @@ class Coin
 
     public Coin(float startX, float startY, int value)
     {
-        sprite = Raylib.LoadTexture("Fishking/coin.png"); 
+        sprite = Raylib.LoadTexture("Fishking/coinSilver.png"); 
         x = startX;
         y = startY;
         Value = value;
