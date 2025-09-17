@@ -7,24 +7,29 @@ class Program
 {
     static void Main()
     {
-        Raylib.InitWindow(800, 600, "Insaniquarium Clone");
+        Raylib.InitWindow(900, 600, "Insaniquarium Clone");
         Raylib.SetTargetFPS(60);
 
-        // Background
-        Texture2D bg = Raylib.LoadTexture("Fishking/Fishbg.png");
+        // ---------- BACKGROUND -----------
+        Texture2D bg = Raylib.LoadTexture("assets/background.png");
 
-        // Money system
+        // ---------- UI Assets -----------
+        Texture2D regular_fish = Raylib.LoadTexture("assets/regularFish_buy.png");
+
+        Vector2 buttonPos = new Vector2(130, 10);
+        Rectangle buttonRect = new Rectangle(buttonPos.X, buttonPos.Y, regular_fish.Width, regular_fish.Height);
+
+        // ---------- MONEY SYSTEM -----------
         int money = 0;
         List<Fish> fishes = new List<Fish>();
         List<Coin> coins = new List<Coin>();
 
-        // Start with one fish
+        // Onready
         fishes.Add(new BasicFish(400, 300));
 
         while (!Raylib.WindowShouldClose())
         {
-            // --- Update ---
-            // Check keypress to buy fish (inside loop so it reacts each frame)
+            // ---------- INPUT: FISH -----------
             if (Raylib.IsKeyPressed(KeyboardKey.One) && money >= 50)
             {
                 fishes.Add(new BasicFish(100, 200));
@@ -43,11 +48,11 @@ class Program
                 money -= 150;
             }
 
-            // Update fish and coins
+            // ---------- UPDATE: FISH -----------
             foreach (var fish in fishes) fish.Update(coins);
             foreach (var coin in coins) coin.Update();
 
-            // Mouse click: check for coins
+            // ---------- INPUT: COIN -----------
             if (Raylib.IsMouseButtonPressed(MouseButton.Left))
             {
                 Vector2 mouse = Raylib.GetMousePosition();
@@ -61,17 +66,20 @@ class Program
                 }
             }
 
-            // --- Draw ---
+            // ---------- DRAW -----------
             Raylib.BeginDrawing();
             Raylib.ClearBackground(Color.Black);
 
-            Raylib.DrawTexture(bg, 0, 0, Color.White);
+            Rectangle src = new Rectangle(0, 0, bg.Width, bg.Height);
+            Rectangle dest = new Rectangle(0, 0, 900, 600); 
+            Raylib.DrawTexturePro(bg, src, dest, new Vector2(0, 0), 0f, Color.White);
 
             foreach (var fish in fishes) fish.Draw();
             foreach (var coin in coins) coin.Draw();
 
-            // HUD
+            // ---------- UI -----------
             Raylib.DrawText($"Money: {money}", 10, 10, 20, Color.White);
+            Raylib.DrawTexture(regular_fish, 130, 10, Color.White);
 
             Raylib.EndDrawing();
         }

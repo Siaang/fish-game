@@ -1,18 +1,34 @@
 using System;
 using System.Numerics;
 using Raylib_cs;
+using System.Collections.Generic;
 
 class BasicFish : Fish
 {
+    private static readonly string[] _spritePaths = new string[]
+    {
+        "assets/regular_fish1.png",
+        "assets/regular_fish2.png"
+    };
+
     private float coinTimer = 0;
 
-    public BasicFish(float startX, float startY) : base("Fishking/bluefin.png", startX, startY) {}
+    public BasicFish(float startX, float startY)
+        : base(ChooseRandomSprite(), startX, startY)
+    {
+    }
+
+    private static string ChooseRandomSprite()
+    {
+        Random rand = new Random();
+        int index = rand.Next(_spritePaths.Length);
+        return _spritePaths[index];
+    }
 
     public override void Update(List<Coin> coins)
     {
         base.Update(coins);
 
-        // Drops a coin every 5 sec
         coinTimer -= Raylib.GetFrameTime();
         if (coinTimer <= 0)
         {
@@ -24,7 +40,8 @@ class BasicFish : Fish
 
 class CarnivoreFish : Fish
 {
-    public CarnivoreFish(float startX, float startY) : base("Fishking/snapper.png", startX, startY) {}
+    public CarnivoreFish(float startX, float startY)
+        : base("assets/snapper.png", startX, startY) { }
 
     public override void Update(List<Coin> coins)
     {
@@ -32,4 +49,3 @@ class CarnivoreFish : Fish
         // TODO: Eat smaller fish → students implement
     }
 }
-

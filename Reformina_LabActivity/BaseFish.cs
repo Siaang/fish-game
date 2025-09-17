@@ -19,7 +19,7 @@ abstract class Fish
 
     public virtual void Update(List<Coin> coins)
     {
-        // Movement every few seconds
+        // ---------- MOVE RANDOMLY -----------
         moveTimer -= Raylib.GetFrameTime();
         if (moveTimer <= 0)
         {
@@ -34,9 +34,20 @@ abstract class Fish
 
     public virtual void Draw()
     {
-        Raylib.DrawTexture(sprite, (int)x, (int)y, Color.White);
-        // HP Bar
-        Raylib.DrawRectangle((int)x, (int)y - 10, 50, 5, Color.DarkGray);
-        Raylib.DrawRectangle((int)x, (int)y - 10, (int)(50 * (hp / 100)), 5, Color.Green);
+        Rectangle src = new Rectangle(0, 0, sprite.Width, sprite.Height);
+
+        Rectangle dest = new Rectangle(
+            x, 
+            y, 
+            sprite.Width * 2, 
+            sprite.Height * 2
+        );
+
+        Raylib.DrawTexturePro(sprite, src, dest, new Vector2(0, 0), 0f, Color.White);
+
+        Raylib.DrawRectangle((int)x, (int)y - 10, (int)(sprite.Width * 2), 5, Color.DarkGray);
+        Raylib.DrawRectangle((int)x, (int)y - 10, 
+            (int)((sprite.Width * 2) * (hp / 100)), 5, Color.Green);
     }
+
 }
