@@ -30,7 +30,7 @@ class SmallFish : Fish
         coinTimer -= Raylib.GetFrameTime();
         if (coinTimer <= 0)
         {
-            coins.Add(new Coin(x + 20, y + 20, 25));
+            coins.Add(new Coin(x + 5, y + 5, 25));
             coinTimer = 5f;
         }
     }
