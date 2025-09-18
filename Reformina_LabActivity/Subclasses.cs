@@ -3,7 +3,7 @@ using System.Numerics;
 using Raylib_cs;
 using System.Collections.Generic;
 
-class BasicFish : Fish
+class SmallFish : Fish
 {
     private static readonly string[] _spritePaths = new string[]
     {
@@ -13,10 +13,8 @@ class BasicFish : Fish
 
     private float coinTimer = 0;
 
-    public BasicFish(float startX, float startY)
-        : base(ChooseRandomSprite(), startX, startY)
-    {
-    }
+    public SmallFish(float startX, float startY)
+        : base(ChooseRandomSprite(), startX, startY) {}
 
     private static string ChooseRandomSprite()
     {
@@ -38,9 +36,9 @@ class BasicFish : Fish
     }
 }
 
-class CarnivoreFish : Fish
+class MediumFish : Fish
 {
-    public CarnivoreFish(float startX, float startY)
+    public MediumFish(float startX, float startY)
         : base("assets/snapper.png", startX, startY) { }
 
     public override void Update(List<Coin> coins)
