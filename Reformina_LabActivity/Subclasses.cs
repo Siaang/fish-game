@@ -3,12 +3,13 @@ using System.Numerics;
 using Raylib_cs;
 using System.Collections.Generic;
 
+//---------- SMALL FISH -----------
 class SmallFish : Fish
 {
     private static readonly string[] _spritePaths = new string[]
     {
-        "assets/regular_fish1.png",
-        "assets/regular_fish2.png"
+        "assets/small_fish1.png",
+        "assets/small_fish2.png"
     };
 
     private float coinTimer = 0;
@@ -30,20 +31,43 @@ class SmallFish : Fish
         coinTimer -= Raylib.GetFrameTime();
         if (coinTimer <= 0)
         {
-            coins.Add(new Coin(x + 5, y + 5, 25));
+            coins.Add(new Coin(x + 5, y + 5, 5));
             coinTimer = 5f;
         }
     }
 }
 
+//---------- MEDIUM FISH -----------
 class MediumFish : Fish
 {
+    private static readonly string[] _spritePaths = new string[]
+    {
+        "assets/medium_fish1.png",
+        "assets/medium_fish2.png"
+    };
+
+    private float coinTimer = 0;
+
     public MediumFish(float startX, float startY)
-        : base("assets/snapper.png", startX, startY) { }
+        : base(ChooseRandomSprite(), startX, startY) { }
+
+    private static string ChooseRandomSprite()
+    {
+        Random rand = new Random();
+        int index = rand.Next(_spritePaths.Length);
+        return _spritePaths[index];
+    }
 
     public override void Update(List<Coin> coins)
     {
         base.Update(coins);
-        // TODO: Eat smaller fish → students implement
+
+        coinTimer -= Raylib.GetFrameTime();
+        if (coinTimer <= 0)
+        {
+            coins.Add(new Coin(x + 5, y + 5, 10));
+            coinTimer = 5f;
+        }
     }
 }
+

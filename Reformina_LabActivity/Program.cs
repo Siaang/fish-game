@@ -50,12 +50,6 @@ class Program
                 money -= 150;
             }
 
-            if (Raylib.IsKeyPressed(KeyboardKey.Three) && money >= 150)
-            {
-                fishes.Add(new MediumFish(x, y));
-                money -= 150;
-            }
-
             // ---------- UPDATE: FISH -----------
             foreach (var fish in fishes) fish.Update(coins);
             foreach (var coin in coins) coin.Update();
