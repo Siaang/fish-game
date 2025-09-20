@@ -8,7 +8,8 @@ abstract class Fish
     protected float x, y;
     protected float hp = 100;
     protected float speed = 2f;
-    protected float moveTimer = 0;
+    public int direction = 1;
+    protected float directionTimer = 0;
     protected Random rand = new Random();
 
     public Fish(string spritePath, float startX, float startY)
@@ -20,22 +21,41 @@ abstract class Fish
     public virtual void Update(List<Coin> coins)
     {
         // ---------- MOVE RANDOMLY -----------
-        moveTimer -= Raylib.GetFrameTime();
-        if (moveTimer <= 0)
+        float swimSpeed = 50f * Raylib.GetFrameTime();
+        x += swimSpeed * direction;
+
+        directionTimer -= Raylib.GetFrameTime();
+        if (directionTimer <= 0)
         {
-            x += rand.Next(-50, 50);
-            y += rand.Next(-30, 30);
-            moveTimer = 2f; 
+            direction *= -1;
+            directionTimer = 5f;
         }
 
-        x = Math.Clamp(x, 0, Raylib.GetScreenWidth() - sprite.Width);
-        y = Math.Clamp(y, 0, Raylib.GetScreenHeight() - sprite.Height);
+        if (x > 890 && x < 580)
+        {
+            direction *= -1;
+            directionTimer = 5f;
+        }
+
+        if (x > Raylib.GetScreenWidth())
+        {
+            x = 0f;
+            y = rand.Next(100, 401);
+        }
+        else if (x < 0)
+        {
+            x = Raylib.GetScreenWidth();
+            y = rand.Next(100, 401);
+        }          
     }
 
     public virtual void Draw()
     {
-        Rectangle src = new Rectangle(0, 0, sprite.Width, sprite.Height);
-
+        Rectangle src = new Rectangle(
+            0,
+            0,
+            direction == 1 ? sprite.Width : -sprite.Width,
+            sprite.Height);
         Rectangle dest = new Rectangle(
             x, 
             y, 

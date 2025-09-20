@@ -31,7 +31,7 @@ class SmallFish : Fish
         coinTimer -= Raylib.GetFrameTime();
         if (coinTimer <= 0)
         {
-            coins.Add(new Coin(x + 5, y + 5, 5));
+            coins.Add(new BronzeCoin(x + 5, y + 5));
             coinTimer = 5f;
         }
     }
@@ -65,8 +65,29 @@ class MediumFish : Fish
         coinTimer -= Raylib.GetFrameTime();
         if (coinTimer <= 0)
         {
-            coins.Add(new Coin(x + 5, y + 5, 10));
-            coinTimer = 5f;
+            coins.Add(new SilverCoin(x + 5, y + 5));
+            coinTimer = 8f;
+        }
+    }
+}
+
+ //---------- LARGE FISH -----------
+class LargeFish : Fish
+{
+    private float coinTimer = 0;
+
+    public LargeFish(float startX, float startY)
+        : base("assets/large_fish.png", startX, startY) { }
+
+    public override void Update(List<Coin> coins)
+    {
+        base.Update(coins);
+
+        coinTimer -= Raylib.GetFrameTime();
+        if (coinTimer <= 0)
+        {
+            coins.Add(new GoldCoin(x + 10, y + 10));
+            coinTimer = 12f;
         }
     }
 }
