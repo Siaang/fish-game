@@ -3,27 +3,43 @@ using System.Numerics;
 using Raylib_cs;
 using System.Collections.Generic;
 
+// ---------- BRONZE COIN -----------
+class BronzeCoin : Coin
+{
+    public BronzeCoin(float x, float y)
+        : base("assets/coin_bronze.png", x, y, 10) {}
+}
+
+// ---------- SILVER COIN -----------
+class SilverCoin : Coin
+{
+    public SilverCoin(float x, float y)
+        : base("assets/coin_silver.png", x, y, 25) {}   
+}
+
+// ---------- GOLD COIN -----------
+class GoldCoin : Coin
+{
+    public GoldCoin(float x, float y)
+        : base("assets/coin_gold.png", x, y, 50) {}
+}
+
+//---------------------------------------------------------------------
+
 //---------- SMALL FISH -----------
 class SmallFish : Fish
 {
-    private static readonly string[] _spritePaths = new string[]
+    private static FishTextureHandler textureHandler;
+
+    public static void SetTextureHandler(FishTextureHandler handler)
     {
-        "assets/small_fish1.png",
-        "assets/small_fish2.png"
-    };
+        textureHandler = handler;
+    }
 
     private float coinTimer = 0;
 
     public SmallFish(float startX, float startY)
-        : base(ChooseRandomSprite(), startX, startY) {}
-
-    private static string ChooseRandomSprite()
-    {
-        Random rand = new Random();
-        int index = rand.Next(_spritePaths.Length);
-        return _spritePaths[index];
-    }
-
+    : base(textureHandler.GetRandomTexture("SmallFish"), startX, startY) {}
     public override void Update(List<Coin> coins)
     {
         base.Update(coins);
@@ -40,23 +56,18 @@ class SmallFish : Fish
 //---------- MEDIUM FISH -----------
 class MediumFish : Fish
 {
-    private static readonly string[] _spritePaths = new string[]
-    {
-        "assets/medium_fish1.png",
-        "assets/medium_fish2.png"
-    };
+    private static FishTextureHandler textureHandler;
 
+    public static void SetTextureHandler(FishTextureHandler handler)
+    {
+        textureHandler = handler;
+    }
+    
     private float coinTimer = 0;
 
     public MediumFish(float startX, float startY)
-        : base(ChooseRandomSprite(), startX, startY) { }
+    : base(textureHandler.GetRandomTexture("MediumFish"), startX, startY) {}
 
-    private static string ChooseRandomSprite()
-    {
-        Random rand = new Random();
-        int index = rand.Next(_spritePaths.Length);
-        return _spritePaths[index];
-    }
 
     public override void Update(List<Coin> coins)
     {
@@ -74,10 +85,18 @@ class MediumFish : Fish
  //---------- LARGE FISH -----------
 class LargeFish : Fish
 {
+    private static FishTextureHandler textureHandler;
+
+    public static void SetTextureHandler(FishTextureHandler handler)
+    {
+        textureHandler = handler;
+    }
+
     private float coinTimer = 0;
 
     public LargeFish(float startX, float startY)
-        : base("assets/large_fish.png", startX, startY) { }
+        : base(textureHandler.GetRandomTexture("largeFish"), startX, startY) {}
+
 
     public override void Update(List<Coin> coins)
     {
@@ -91,4 +110,5 @@ class LargeFish : Fish
         }
     }
 }
+
 
