@@ -20,10 +20,8 @@ public class FoodPellets
     {
         if (!isActive) return;
 
-        // Simulate gravity
         y += fallSpeed * Raylib.GetFrameTime();
 
-        // Check if it hits the bottom of the screen
         if (y >= Raylib.GetScreenHeight())
         {
             Destroy();
@@ -31,7 +29,7 @@ public class FoodPellets
     }
     public virtual void Draw()
     {
-        //if (!isActive) return;
+        if (!isActive) return;
 
         Raylib.DrawTexture(sprite, (int)x, (int)y, Color.White);
     }
@@ -45,13 +43,13 @@ public class BigFoodPellet : FoodPellets
 {
     public BigFoodPellet(float startX, float startY) : base(startX, startY, 10)
     {
-        //sprite = Raylib.LoadTexture("res/pelletBig.png");
+        sprite = Raylib.LoadTexture("assets/greenPellet.png");
     }
 }
 public class SmallFoodPellet : FoodPellets
 {
     public SmallFoodPellet(float startX, float startY) : base(startX, startY, 5)
     {
-        //sprite = Raylib.LoadTexture("res/pelletsmall.png");
+        sprite = Raylib.LoadTexture("assets/redPellet.png");
     }
 }

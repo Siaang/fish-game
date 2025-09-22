@@ -3,18 +3,28 @@ using Raylib_cs;
 public class UITextureHandler
 {
     public Texture2D Bg { get; private set; }
+
+    // Fish
     public Texture2D SmallFishIcon { get; private set; }
     public Texture2D MediumFishIcon { get; private set; }
     public Texture2D LargeFishIcon { get; private set; }
     public Texture2D MassiveFishIcon { get; private set; }
 
+    // Pellets
+    public Texture2D greenPelletIcon { get; private set; }
+    public Texture2D redPelletIcon { get; private set; }
+
     public UITextureHandler()
     {
         Bg = Raylib.LoadTexture("assets/background.png");
+
         SmallFishIcon = Raylib.LoadTexture("assets/smallFish_buy.png");
         MediumFishIcon = Raylib.LoadTexture("assets/mediumFish_buy.png");
         LargeFishIcon = Raylib.LoadTexture("assets/largeFish_buy.png");
         MassiveFishIcon = Raylib.LoadTexture("assets/massiveFish_buy.png");
+
+        greenPelletIcon = Raylib.LoadTexture("assets/greenPelletIcon.png");
+        redPelletIcon = Raylib.LoadTexture("assets/redPelletIcon.png");
     }
 
     public void Dispose()
@@ -24,12 +34,14 @@ public class UITextureHandler
         Raylib.UnloadTexture(MediumFishIcon);
         Raylib.UnloadTexture(LargeFishIcon);
         Raylib.UnloadTexture(MassiveFishIcon);
+        Raylib.UnloadTexture(greenPelletIcon);
+        Raylib.UnloadTexture(redPelletIcon);
     }
 }
 
 public class FishTextureHandler
 {
-    // store arrays of textures
+    // store textures using arrays
     private Dictionary<string, Texture2D[]> fishTextures = new Dictionary<string, Texture2D[]>();
 
     public FishTextureHandler()
@@ -76,8 +88,4 @@ public class FishTextureHandler
             }
         }
     }
-}
-
-public class CoinTextureHandler {
-
 }

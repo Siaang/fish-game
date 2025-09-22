@@ -10,6 +10,7 @@ public class GameManager
     private int money = 0;
     private List<Fish> fishes = new List<Fish>();
     private List<Coin> coins = new List<Coin>();
+    private List<FoodPellets> pellets = new List<FoodPellets>();
 
     private UITextureHandler uiTextures;
     private FishTextureHandler fishTextures;
@@ -19,10 +20,10 @@ public class GameManager
         screenWidth = width;
         screenHeight = height;
 
-        // Load UI Textures
+        // Load UI Texture Manager
         uiTextures = new UITextureHandler();
 
-        // Load fish textures 
+        // Fish icons
         fishTextures = new FishTextureHandler();
         SmallFish.SetTextureHandler(fishTextures);
         MediumFish.SetTextureHandler(fishTextures);
@@ -60,10 +61,11 @@ public class GameManager
         foreach (var fish in fishes) fish.Update(coins);
         foreach (var coin in coins) coin.Update();
 
+        Vector2 mouse = Raylib.GetMousePosition();
+
         // Input: collect coins
         if (Raylib.IsMouseButtonPressed(MouseButton.Left))
         {
-            Vector2 mouse = Raylib.GetMousePosition();
             for (int i = coins.Count - 1; i >= 0; i--)
             {
                 if (coins[i].IsClicked(mouse))
@@ -71,6 +73,41 @@ public class GameManager
                     money += coins[i].Value;
                     coins.RemoveAt(i);
                 }
+            }
+        }
+
+        // Pellets
+        Rectangle greenPelletRect = new Rectangle(790, 520, uiTextures.greenPelletIcon.Width, uiTextures.greenPelletIcon.Height);
+        Rectangle redPelletRect = new Rectangle(840, 520, uiTextures.redPelletIcon.Width, uiTextures.redPelletIcon.Height);
+
+        if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+        {
+            if (Raylib.CheckCollisionPointRec(mouse, greenPelletRect) && money >= 3)
+            {
+                float pelletX = Raylib.GetRandomValue(0, screenWidth - 20);
+                float pelletY = 70;
+                pellets.Add(new BigFoodPellet(pelletX, pelletY));
+
+                money -= 3;
+            }
+
+            if (Raylib.CheckCollisionPointRec(mouse, redPelletRect) && money >= 7)
+            {
+                float pelletX = Raylib.GetRandomValue(0, screenWidth - 20);
+                float pelletY = 90;
+                pellets.Add(new SmallFoodPellet(pelletX, pelletY));
+
+                money -= 7;
+            }
+        }
+
+        // Update pellets
+        for (int i = pellets.Count - 1; i >= 0; i--)
+        {
+            pellets[i].Update();
+            if (!pellets[i].isActive)
+            {
+                pellets.RemoveAt(i);
             }
         }
     }
@@ -92,6 +129,14 @@ public class GameManager
         Raylib.DrawTexture(uiTextures.MediumFishIcon, 290, 30, Color.White);
         Raylib.DrawTexture(uiTextures.LargeFishIcon, 410, 10, Color.White);
         Raylib.DrawTexture(uiTextures.MassiveFishIcon, 530, 10, Color.White);
+
+        Raylib.DrawTexture(uiTextures.greenPelletIcon, 790, 520, Color.White);
+        Raylib.DrawTexture(uiTextures.redPelletIcon, 840, 520, Color.White);
+
+        // Draw pellets
+        foreach (var pellet in pellets)
+            pellet.Draw();
+
     }
 
     public void Dispose()
