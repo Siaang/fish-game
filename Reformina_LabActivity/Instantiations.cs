@@ -7,29 +7,29 @@ using System.Collections.Generic;
 class BronzeCoin : Coin
 {
     public BronzeCoin(float x, float y)
-        : base("assets/coin_bronze.png", x, y, 10) {}
+        : base("assets/coin_bronze.png", x, y, 10) { }
 }
 
 // ---------- SILVER COIN -----------
 class SilverCoin : Coin
 {
     public SilverCoin(float x, float y)
-        : base("assets/coin_silver.png", x, y, 25) {}   
+        : base("assets/coin_silver.png", x, y, 25) { }   
 }
 
 // ---------- GOLD COIN -----------
 class GoldCoin : Coin
 {
     public GoldCoin(float x, float y)
-        : base("assets/coin_gold.png", x, y, 50) {}
+        : base("assets/coin_gold.png", x, y, 50) { }
 }
 
-//---------------------------------------------------------------------
+//====================================================================
 
 //---------- SMALL FISH -----------
 class SmallFish : Fish
 {
-    private static FishTextureHandler textureHandler;
+    private static FishTextureHandler? textureHandler;
 
     public static void SetTextureHandler(FishTextureHandler handler)
     {
@@ -39,7 +39,8 @@ class SmallFish : Fish
     private float coinTimer = 0;
 
     public SmallFish(float startX, float startY)
-    : base(textureHandler.GetRandomTexture("SmallFish"), startX, startY) {}
+        : base(textureHandler!.GetRandomTexture("SmallFish"), startX, startY) { }
+
     public override void Update(List<Coin> coins)
     {
         base.Update(coins);
@@ -56,18 +57,17 @@ class SmallFish : Fish
 //---------- MEDIUM FISH -----------
 class MediumFish : Fish
 {
-    private static FishTextureHandler textureHandler;
+    private static FishTextureHandler? textureHandler;
 
     public static void SetTextureHandler(FishTextureHandler handler)
     {
         textureHandler = handler;
     }
-    
+
     private float coinTimer = 0;
 
     public MediumFish(float startX, float startY)
-    : base(textureHandler.GetRandomTexture("MediumFish"), startX, startY) {}
-
+        : base(textureHandler!.GetRandomTexture("MediumFish"), startX, startY) { }
 
     public override void Update(List<Coin> coins)
     {
@@ -82,10 +82,10 @@ class MediumFish : Fish
     }
 }
 
- //---------- LARGE FISH -----------
+//---------- LARGE FISH -----------
 class LargeFish : Fish
 {
-    private static FishTextureHandler textureHandler;
+    private static FishTextureHandler? textureHandler;
 
     public static void SetTextureHandler(FishTextureHandler handler)
     {
@@ -95,8 +95,7 @@ class LargeFish : Fish
     private float coinTimer = 0;
 
     public LargeFish(float startX, float startY)
-        : base(textureHandler.GetRandomTexture("largeFish"), startX, startY) {}
-
+        : base(textureHandler!.GetRandomTexture("largeFish"), startX, startY) { }
 
     public override void Update(List<Coin> coins)
     {
@@ -110,5 +109,3 @@ class LargeFish : Fish
         }
     }
 }
-
-
