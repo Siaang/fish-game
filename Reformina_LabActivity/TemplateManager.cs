@@ -3,6 +3,7 @@ using System.Numerics;
 using Raylib_cs;
 
 
+
 // the base template for the coins
 public class Coin
 {
@@ -75,28 +76,24 @@ public class Fish
 {
     protected Texture2D sprite;
     public float x, y;
-    public float hp = 100;
+    public float hp;
     public float hpTimer = 2f;
 
     public float age = 0f;
-    //virtual int lifespan = Random.Shared.Next(80, 140); 
-
     public virtual float lifespan { get; set; }
+
     public bool isAdult = false;
     public bool isDead = false;
     public bool isActive = true;
-    public float maxHp = 30;
 
+    public float maxHp = 100;
     public float hungerTimer = 1f;
-
     public float coinTimer = 5f;
     public float poopTimer = 10f;
-
     public float scale = 0.5f;
     protected float speed = 2f;
     public int direction = 1;
     public bool triggered = false;
-
     public FishState currentState = FishState.Swim;
     protected float directionTimer = 0;
     protected Random rand = new Random();
@@ -106,7 +103,9 @@ public class Fish
         sprite = texture;
         x = startX;
         y = startY;
+        maxHp = 100; 
         hp = maxHp;
+
     }
 
     public virtual void Update(List<Coin> coins, List<FoodPellets> pellets, string type)
@@ -116,17 +115,17 @@ public class Fish
 
         if (directionTimer <= 0)
         {
-            directionTimer = rand.Next(5, 11); 
+            directionTimer = rand.Next(5, 11);
         }
     }
 
     public virtual void Move(List<FoodPellets> pellets)
     {
-         // ---------- MOVE RANDOMLY -----------
+        // ---------- MOVE RANDOMLY -----------
         switch (currentState)
         {
             case FishState.Swim:
-                float swimSpeed = 50f * Raylib.GetFrameTime();
+                float swimSpeed = 40f * Raylib.GetFrameTime();
                 x += swimSpeed * direction;
 
                 directionTimer -= Raylib.GetFrameTime();
@@ -154,9 +153,9 @@ public class Fish
                 }
                 break;
 
-             // ---------- HUNGRY -----------
+            // ---------- HUNGRY -----------
             case FishState.Hungry:
-                float hungrySpeed = 70f * Raylib.GetFrameTime();
+                float hungrySpeed = 60f * Raylib.GetFrameTime();
 
                 FoodPellets target = FindNearestPellet(pellets);
                 if (target != null)
@@ -192,11 +191,11 @@ public class Fish
                     }
                 }
                 break;
-             // ---------- die -----------
+            // ---------- die -----------
             case FishState.Dead:
                 hp = 0;
-                direction = 1; // Flip
-                y -= 20 * Raylib.GetFrameTime(); 
+                direction = 1; 
+                y -= 20 * Raylib.GetFrameTime();
                 if (!triggered)
                 {
                     //PlaySingle.PlaySound("FishDeath");
@@ -210,7 +209,7 @@ public class Fish
         }
     }
 
-        protected virtual FoodPellets FindNearestPellet(List<FoodPellets> pellets)
+    protected virtual FoodPellets FindNearestPellet(List<FoodPellets> pellets)
     {
         FoodPellets closest = null;
         float minDist = float.MaxValue;
@@ -227,8 +226,8 @@ public class Fish
 
         return closest;
     }
-        
-        public virtual bool IsCollidingWith(FoodPellets pellet)
+
+    public virtual bool IsCollidingWith(FoodPellets pellet)
     {
         Rectangle fishRect = new Rectangle(x, y, sprite.Width * scale, sprite.Height * scale);
         Rectangle pelletRect = new Rectangle(pellet.x, pellet.y, 8, 8);
@@ -252,8 +251,29 @@ public class Fish
 
         Raylib.DrawTexturePro(sprite, src, dest, new Vector2(0, 0), 0f, Color.White);
 
-        Raylib.DrawRectangle((int)x, (int)y - 10, (int)(sprite.Width * 2), 5, Color.DarkGray);
-        Raylib.DrawRectangle((int)x, (int)y - 10,
-            (int)((sprite.Width * 2) * (hp / 100)), 5, Color.Green);
+        // Lifespan
+        float lifePercent = 1f;
+        if (lifespan > 0)
+        {
+            lifePercent = Math.Clamp((lifespan - age) / lifespan, 0f, 1f);
+        }
+        Raylib.DrawRectangle(
+            (int)x,
+            (int)y + 46,
+            (int)(sprite.Width * 2 * lifePercent),
+            5,
+            Color.Yellow
+        );
+
+        // HP 
+        float hpPercent = Math.Clamp(hp / maxHp, 0f, 1f);
+        Raylib.DrawRectangle(
+            (int)x,
+            (int)y + 40,
+            (int)(sprite.Width * 2 * hpPercent),
+            5,
+            Color.Green
+        );
     }
 }
+

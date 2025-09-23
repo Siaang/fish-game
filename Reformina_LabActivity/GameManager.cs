@@ -16,7 +16,7 @@ public class GameManager
     // Managers
     private UITextureHandler uiTextures;
     private FishTextureHandler fishTextures;
-    //private AISystem aiSystem;
+    private AISystem aiSystem;
 
     public GameManager(int width, int height)
     {
@@ -31,6 +31,9 @@ public class GameManager
         SmallFish.SetTextureHandler(fishTextures);
         MediumFish.SetTextureHandler(fishTextures);
         LargeFish.SetTextureHandler(fishTextures);
+
+        // AI 
+         aiSystem = new AISystem(fishes, pellets, coins);
 
         // Start with one fish
         fishes.Add(new SmallFish(400, 300));
@@ -61,6 +64,7 @@ public class GameManager
         }
 
         // Update fish + coins
+         aiSystem.Update(fishes, coins, pellets);
         foreach (var fish in fishes) fish.Update(coins, pellets, fish.GetType().Name);
         foreach (var coin in coins) coin.Update();
 

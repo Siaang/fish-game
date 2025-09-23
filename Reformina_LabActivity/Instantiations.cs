@@ -43,7 +43,12 @@ class SmallFish : Fish
     }
 
     public SmallFish(float startX, float startY)
-        : base(textureHandler!.GetRandomTexture("SmallFish"), startX, startY) { }
+        : base(textureHandler!.GetRandomTexture("SmallFish"), startX, startY)
+    {
+        maxHp = 50; 
+        hp = maxHp;
+        lifespan = 60f; 
+    }
 
     public override void Update(List<Coin> coins, List<FoodPellets> pellets, string fishType)
     {
@@ -69,7 +74,12 @@ class MediumFish : Fish
     }
 
     public MediumFish(float startX, float startY)
-        : base(textureHandler!.GetRandomTexture("MediumFish"), startX, startY) { }
+        : base(textureHandler!.GetRandomTexture("MediumFish"), startX, startY)
+    { 
+        maxHp = 80; 
+        hp = maxHp;
+        lifespan = 120f; 
+    }
 
     public override void Update(List<Coin> coins, List<FoodPellets> pellets, string fishType)
     {
@@ -95,7 +105,12 @@ class LargeFish : Fish
     }
 
     public LargeFish(float startX, float startY)
-        : base(textureHandler!.GetRandomTexture("largeFish"), startX, startY) { }
+        : base(textureHandler!.GetRandomTexture("largeFish"), startX, startY)
+    { 
+        maxHp = 110; 
+        hp = maxHp;
+        lifespan = 160f;
+    }
 
     public override void Update(List<Coin> coins, List<FoodPellets> pellets, string fishType)
     {

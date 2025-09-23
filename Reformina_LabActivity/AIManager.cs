@@ -21,7 +21,7 @@ public class AISystem
         this.coins = coins;
     }
 
-    public void Update()
+    public void Update(List<Fish> fishes, List<Coin> coins, List<FoodPellets> pellets)
     {
         float deltaTime = Raylib.GetFrameTime();
 
@@ -100,7 +100,6 @@ public class AISystem
                     break;
     
             }
-            fish.Update(coins, pellets, fish.GetType().Name);
         }
     }
 
