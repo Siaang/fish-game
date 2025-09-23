@@ -4,7 +4,7 @@ using Raylib_cs;
 
 
 // the base template for the coins
-abstract class Coin
+public class Coin
 {
     private Texture2D spriteSheet;
     private float x, y;
@@ -71,7 +71,7 @@ abstract class Coin
 }
 
 // the base template for the fishyyy
-abstract class Fish
+public class Fish
 {
     protected Texture2D sprite;
     protected float x, y;

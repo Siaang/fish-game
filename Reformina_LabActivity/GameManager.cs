@@ -8,9 +8,9 @@ public class GameManager
     private int screenHeight;
 
     private int money = 0;
-    private List<Fish> fishes = new List<Fish>();
-    private List<Coin> coins = new List<Coin>();
-    private List<FoodPellets> pellets = new List<FoodPellets>();
+    public List<Fish> fishes = new List<Fish>();
+    public List<Coin> coins = new List<Coin>();
+    public List<FoodPellets> pellets = new List<FoodPellets>();
 
     private UITextureHandler uiTextures;
     private FishTextureHandler fishTextures;
