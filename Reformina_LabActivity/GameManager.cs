@@ -1,6 +1,7 @@
 using Raylib_cs;
 using System.Numerics;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 public class GameManager
 {
@@ -12,8 +13,10 @@ public class GameManager
     public List<Coin> coins = new List<Coin>();
     public List<FoodPellets> pellets = new List<FoodPellets>();
 
+    // Managers
     private UITextureHandler uiTextures;
     private FishTextureHandler fishTextures;
+    //private AISystem aiSystem;
 
     public GameManager(int width, int height)
     {
@@ -58,7 +61,7 @@ public class GameManager
         }
 
         // Update fish + coins
-        foreach (var fish in fishes) fish.Update(coins);
+        foreach (var fish in fishes) fish.Update(coins, pellets, fish.GetType().Name);
         foreach (var coin in coins) coin.Update();
 
         Vector2 mouse = Raylib.GetMousePosition();

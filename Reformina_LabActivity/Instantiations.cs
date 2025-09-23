@@ -24,6 +24,12 @@ class GoldCoin : Coin
         : base("assets/coin_gold.png", x, y, 50) { }
 }
 
+class Poop : Coin
+{
+    public Poop(float x, float y)
+        : base("assets/medium_fish1.png", x, y, -15) { }
+}
+
 //====================================================================
 
 //---------- SMALL FISH -----------
@@ -36,14 +42,12 @@ class SmallFish : Fish
         textureHandler = handler;
     }
 
-    private float coinTimer = 0;
-
     public SmallFish(float startX, float startY)
         : base(textureHandler!.GetRandomTexture("SmallFish"), startX, startY) { }
 
-    public override void Update(List<Coin> coins)
+    public override void Update(List<Coin> coins, List<FoodPellets> pellets, string fishType)
     {
-        base.Update(coins);
+        base.Update(coins, pellets, fishType);
 
         coinTimer -= Raylib.GetFrameTime();
         if (coinTimer <= 0)
@@ -64,20 +68,18 @@ class MediumFish : Fish
         textureHandler = handler;
     }
 
-    private float coinTimer = 0;
-
     public MediumFish(float startX, float startY)
         : base(textureHandler!.GetRandomTexture("MediumFish"), startX, startY) { }
 
-    public override void Update(List<Coin> coins)
+    public override void Update(List<Coin> coins, List<FoodPellets> pellets, string fishType)
     {
-        base.Update(coins);
+        base.Update(coins, pellets, fishType);
 
         coinTimer -= Raylib.GetFrameTime();
         if (coinTimer <= 0)
         {
-            coins.Add(new SilverCoin(x + 5, y + 5));
-            coinTimer = 8f;
+            coins.Add(new BronzeCoin(x + 5, y + 5));
+            coinTimer = 10f;
         }
     }
 }
@@ -92,20 +94,18 @@ class LargeFish : Fish
         textureHandler = handler;
     }
 
-    private float coinTimer = 0;
-
     public LargeFish(float startX, float startY)
         : base(textureHandler!.GetRandomTexture("largeFish"), startX, startY) { }
 
-    public override void Update(List<Coin> coins)
+    public override void Update(List<Coin> coins, List<FoodPellets> pellets, string fishType)
     {
-        base.Update(coins);
+        base.Update(coins, pellets, fishType);
 
         coinTimer -= Raylib.GetFrameTime();
         if (coinTimer <= 0)
         {
-            coins.Add(new GoldCoin(x + 10, y + 10));
-            coinTimer = 12f;
+            coins.Add(new SilverCoin(x + 10, y + 10));
+            coinTimer = 15f;
         }
     }
 }

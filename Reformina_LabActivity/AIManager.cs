@@ -3,24 +3,227 @@ using System;
 using System.Numerics;
 public enum FishState
 {
-    Idle, Swimming, Dead, Hungry
+    Idle,
+    Swim,
+    Dead,
+    Hungry,
 }
-
-public class AIManager
+public class AISystem
 {
     private List<Fish> fishes;
-    private List<Coin> coins;
     private List<FoodPellets> pellets;
+    private List<Coin> coins;
 
-    public AIManager(List<Fish> fishes, List<Coin> coins, List<FoodPellets> pellets)
+    public AISystem(List<Fish> fishes, List<FoodPellets> pellets, List<Coin> coins)
     {
         this.fishes = fishes;
-        this.coins = coins;
         this.pellets = pellets;
+        this.coins = coins;
     }
-    
+
     public void Update()
     {
+        float deltaTime = Raylib.GetFrameTime();
+
+        for (int i = fishes.Count - 1; i >= 0; i--)
+        {
+            Fish fish = fishes[i];
+
+            // Age and HP decay
+            fish.age += deltaTime;
+            fish.hpTimer -= deltaTime;
+            if (fish.hpTimer <= 0)
+            {
+                fish.hp -= 1;
+                fish.hpTimer = 1f;
+            }
+            if (fish.hp <= 80 && fish.hp > 0)
+            {
+                fish.currentState = FishState.Hungry;
+            }  else
+            {
+                fish.currentState = FishState.Swim;
+            }
+            
+            // Growth
+            if (!fish.isAdult && fish.age >= fish.lifespan / 2f && !fish.isDead)
+            {
+                fish.isAdult = true;
+                fish.scale = (float)(1.0 + new Random().NextDouble() * 0.2);
+            }
+
+            // Coin drop (adults only)
+            if (fish.isAdult && fish.coinTimer <= 0 && !fish.isDead)
+            {
+                coins.Add(new GoldCoin(fish.x, fish.y));
+                fish.coinTimer = 5f + (float)new Random().NextDouble() * 8f; 
+            } else if (!fish.isAdult && fish.coinTimer <= 0)
+            {
+                coins.Add(new SilverCoin(fish.x, fish.y));
+                fish.coinTimer = 7f + (float)new Random().NextDouble() * 10f;
+            }
+            else
+            {
+                fish.coinTimer -= deltaTime;
+            }
+
+            // Poop drop
+            if (fish.poopTimer <= 0 && !fish.isDead)
+            {
+                //fish.playSound("poop");
+                coins.Add(new Poop(fish.x, fish.y)); 
+                fish.poopTimer = 10f + (float)new Random().NextDouble() * 3f; 
+            }
+            else
+            {
+                fish.poopTimer -= deltaTime;
+            }
+            if (fish.hp <= 0 || fish.age >= fish.lifespan)
+            {
+                fish.isDead = true;
+                fish.currentState = FishState.Dead;
+            }
+
+            // AI Behavior
+            switch (fish)
+            {
+                // case CarnivoreFish carnivore:
+                //     HandleCarnivore(carnivore, deltaTime);
+                //     break;
+
+                // case JanitorFish janitor:
+                //     HandleJanitor(janitor);
+                //     break;
+
+                case SmallFish basic:
+                    HandleBasicFish(basic);
+                    break;
+    
+            }
+            fish.Update(coins, pellets, fish.GetType().Name);
+        }
+    }
+
+    private void HandleBasicFish(SmallFish fish)
+    {
+        //fish.currentState = fish.hp <= fish.maxHp-(fish.maxHp/4) ? FishState.Hungry : FishState.Swim;
+
+        for (int i = pellets.Count - 1; i >= 0; i--)
+        {
+            FoodPellets pellet = pellets[i];
+            if (fish.IsCollidingWith(pellet) && fish.hp < 70)
+            {
+                Console.WriteLine("Basic fish eating pellet");
+                //PlaySingle.PlaySound("FishEat");
+                fish.hp = Math.Clamp(fish.hp + 25, 0,100); 
+                pellets.RemoveAt(i);
+                break; 
+            }
+        }
 
     }
+
+    // private void HandleCarnivore(LargeFish fish, float deltaTime)
+    // {
+    //     fish.hungerTimer -= deltaTime;
+
+    //     if (fish.hungerTimer <= 0)
+    //     {
+    //         fish.currentState = FishState.Hungry;
+    //         Fish prey = FindNearestPrey(fish);
+    //         if (prey != null)
+    //         {
+    //             fish.MoveTowards(prey.x, prey.y);
+    //             if (fish.IsCollidingWith(prey))
+    //             {
+    //                 fish.hp += 50;
+    //                 fishes.Remove(prey);
+    //                 fish.hungerTimer = 15f;
+    //             }
+    //         }
+    //     }
+    //     else
+    //     {
+    //         fish.currentState = FishState.Swim;
+    //     }
+    // }
+
+    // private void HandleJanitor(JanitorFish fish)
+    // {
+    //     fish.currentState = FishState.Swim;
+
+    //     Poop targetPoop = FindNearestPoop(fish);
+    //     if (targetPoop != null)
+    //     {
+    //         fish.MoveTowards(targetPoop.x, targetPoop.y);
+    //         if (fish.IsCollidingWith(targetPoop))
+    //         {
+    //             coins.Add(new SilverCoin(fish.x, fish.y, 5));
+    //             coins.Remove(targetPoop);
+    //         }
+    //     }
+    // }
+
+    private T FindNearestPellet<T>(Fish fish) where T : FoodPellets
+    {
+        T closest = null;
+        float minDist = float.MaxValue;
+
+        foreach (var pellet in pellets)
+        {
+            if (pellet is T typedPellet)
+            {
+                float dist = Vector2.Distance(new Vector2(fish.x, fish.y), new Vector2(pellet.x, pellet.y));
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    closest = typedPellet;
+                }
+            }
+        }
+
+        return closest;
+    }
+
+    private Fish FindNearestPrey(LargeFish predator)
+    {
+        Fish closest = null;
+        float minDist = float.MaxValue;
+
+        foreach (var fish in fishes)
+        {
+            if (fish is SmallFish basic && !basic.isAdult)
+            {
+                float dist = Vector2.Distance(new Vector2(predator.x, predator.y), new Vector2(basic.x, basic.y));
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    closest = basic;
+                }
+            }
+        }
+
+        return closest;
+    }
+
+    // private Poop FindNearestPoop(Fish fish)
+    // {
+    //     Poop closest = null;
+    //     float minDist = float.MaxValue;
+
+    //     foreach (var coin in coins)
+    //     {
+    //         if (coin is Poop poop)
+    //         {
+    //             float dist = Vector2.Distance(new Vector2(fish.x, fish.y), new Vector2(poop.x, poop.y));
+    //             if (dist < minDist)
+    //             {
+    //                 minDist = dist;
+    //                 closest = poop;
+    //             }
+    //         }
+    //     }
+
+    //     return closest;
+    // }
 }
