@@ -191,6 +191,7 @@ public class Fish
                     }
                 }
                 break;
+
             // ---------- die -----------
             case FishState.Dead:
                 hp = 0;
@@ -236,6 +237,8 @@ public class Fish
 
     public virtual void Draw()
     {
+        Color tintColor = isDead ? new Color(150, 150, 150, 255) : Color.White;
+
         Rectangle src = new Rectangle(
             0,
             0,
@@ -249,7 +252,14 @@ public class Fish
             sprite.Height * 2
         );
 
+        if (isDead)
+        {
+            src.Height = -Math.Abs(src.Height); 
+        }
+
         Raylib.DrawTexturePro(sprite, src, dest, new Vector2(0, 0), 0f, Color.White);
+        Raylib.DrawTexturePro(sprite, src, dest, new Vector2(0, 0), 0f, tintColor);
+
 
         // Lifespan
         float lifePercent = 1f;

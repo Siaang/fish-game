@@ -7,7 +7,7 @@ using System.Collections.Generic;
 class BronzeCoin : Coin
 {
     public BronzeCoin(float x, float y)
-        : base("assets/coin_bronze.png", x, y, 10) { }
+        : base("assets/coin_bronze.png", x, y, 15) { }
 }
 
 // ---------- SILVER COIN -----------
@@ -21,13 +21,13 @@ class SilverCoin : Coin
 class GoldCoin : Coin
 {
     public GoldCoin(float x, float y)
-        : base("assets/coin_gold.png", x, y, 50) { }
+        : base("assets/coin_gold.png", x, y, 35) { }
 }
 
 class Poop : Coin
 {
     public Poop(float x, float y)
-        : base("assets/medium_fish1.png", x, y, -15) { }
+        : base("assets/poop.png", x, y, -15) { }
 }
 
 //====================================================================
@@ -45,21 +45,9 @@ class SmallFish : Fish
     public SmallFish(float startX, float startY)
         : base(textureHandler!.GetRandomTexture("SmallFish"), startX, startY)
     {
-        maxHp = 50; 
+        maxHp = 50;
         hp = maxHp;
-        lifespan = 60f; 
-    }
-
-    public override void Update(List<Coin> coins, List<FoodPellets> pellets, string fishType)
-    {
-        base.Update(coins, pellets, fishType);
-
-        coinTimer -= Raylib.GetFrameTime();
-        if (coinTimer <= 0)
-        {
-            coins.Add(new BronzeCoin(x + 5, y + 5));
-            coinTimer = 5f;
-        }
+        lifespan = 100f;
     }
 }
 
@@ -78,19 +66,7 @@ class MediumFish : Fish
     { 
         maxHp = 80; 
         hp = maxHp;
-        lifespan = 120f; 
-    }
-
-    public override void Update(List<Coin> coins, List<FoodPellets> pellets, string fishType)
-    {
-        base.Update(coins, pellets, fishType);
-
-        coinTimer -= Raylib.GetFrameTime();
-        if (coinTimer <= 0)
-        {
-            coins.Add(new BronzeCoin(x + 5, y + 5));
-            coinTimer = 10f;
-        }
+        lifespan = 140f; 
     }
 }
 
@@ -109,18 +85,6 @@ class LargeFish : Fish
     { 
         maxHp = 110; 
         hp = maxHp;
-        lifespan = 160f;
-    }
-
-    public override void Update(List<Coin> coins, List<FoodPellets> pellets, string fishType)
-    {
-        base.Update(coins, pellets, fishType);
-
-        coinTimer -= Raylib.GetFrameTime();
-        if (coinTimer <= 0)
-        {
-            coins.Add(new SilverCoin(x + 10, y + 10));
-            coinTimer = 15f;
-        }
+        lifespan = 180f;
     }
 }

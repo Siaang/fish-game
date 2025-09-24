@@ -46,26 +46,28 @@ public class AISystem
             }
             
             // Growth
-            if (!fish.isAdult && fish.age >= fish.lifespan / 2f && !fish.isDead)
-            {
-                fish.isAdult = true;
-                fish.scale = (float)(1.0 + new Random().NextDouble() * 0.2);
-            }
-
-            // Coin drop (adults only)
-            if (fish.isAdult && fish.coinTimer <= 0 && !fish.isDead)
+         if (!fish.isDead)
+        {
+            if (fish.isAdult && fish.coinTimer <= 0)
             {
                 coins.Add(new GoldCoin(fish.x, fish.y));
-                fish.coinTimer = 5f + (float)new Random().NextDouble() * 8f; 
-            } else if (!fish.isAdult && fish.coinTimer <= 0)
+                fish.coinTimer = 12f + (float)new Random().NextDouble() * 8f;
+            } 
+            else if (!fish.isAdult && fish.coinTimer <= 0 && !(fish is SmallFish))
             {
                 coins.Add(new SilverCoin(fish.x, fish.y));
-                fish.coinTimer = 7f + (float)new Random().NextDouble() * 10f;
+                fish.coinTimer = 8f + (float)new Random().NextDouble() * 10f;
+            }
+            else if (fish is SmallFish && fish.coinTimer <= 0)
+            {
+                coins.Add(new BronzeCoin(fish.x, fish.y));
+                fish.coinTimer = 5f + (float)new Random().NextDouble() * 12f;
             }
             else
             {
                 fish.coinTimer -= deltaTime;
             }
+        }
 
             // Poop drop
             if (fish.poopTimer <= 0 && !fish.isDead)
