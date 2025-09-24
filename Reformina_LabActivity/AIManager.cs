@@ -124,30 +124,33 @@ public class AISystem
 
     }
 
-    // private void HandleCarnivore(LargeFish fish, float deltaTime)
-    // {
-    //     fish.hungerTimer -= deltaTime;
+    private void HandleCarnivore(CarnivoreFish fish, float deltaTime, List<Fish> fishes)
+{
+    fish.hungerTimer -= deltaTime;
 
-    //     if (fish.hungerTimer <= 0)
-    //     {
-    //         fish.currentState = FishState.Hungry;
-    //         Fish prey = FindNearestPrey(fish);
-    //         if (prey != null)
-    //         {
-    //             fish.MoveTowards(prey.x, prey.y);
-    //             if (fish.IsCollidingWith(prey))
-    //             {
-    //                 fish.hp += 50;
-    //                 fishes.Remove(prey);
-    //                 fish.hungerTimer = 15f;
-    //             }
-    //         }
-    //     }
-    //     else
-    //     {
-    //         fish.currentState = FishState.Swim;
-    //     }
-    // }
+    if (fish.hungerTimer <= 0)
+    {
+        fish.currentState = FishState.Hungry;
+
+        Fish prey = Fish.FindNearestPrey(fish, fishes); 
+
+        if (prey != null)
+        {
+            fish.MoveTowards(prey.x, prey.y, 80f);
+
+            if (fish.IsCollidingWith(prey))
+            {
+                fish.hp = Math.Clamp(fish.hp + 50, 0, fish.maxHp);
+                fishes.Remove(prey);
+                fish.hungerTimer = 15f;
+            }
+        }
+    }
+    else
+    {
+        fish.currentState = FishState.Swim;
+    }
+}
 
     // private void HandleJanitor(JanitorFish fish)
     // {
@@ -186,7 +189,7 @@ public class AISystem
         return closest;
     }
 
-    private Fish FindNearestPrey(LargeFish predator)
+    private Fish FindNearestPrey(CarnivoreFish predator)
     {
         Fish closest = null;
         float minDist = float.MaxValue;

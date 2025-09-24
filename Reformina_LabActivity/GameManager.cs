@@ -30,7 +30,7 @@ public class GameManager
         fishTextures = new FishTextureHandler();
         SmallFish.SetTextureHandler(fishTextures);
         MediumFish.SetTextureHandler(fishTextures);
-        LargeFish.SetTextureHandler(fishTextures);
+        CarnivoreFish.SetTextureHandler(fishTextures);
 
         // AI 
          aiSystem = new AISystem(fishes, pellets, coins);
@@ -59,7 +59,7 @@ public class GameManager
 
         if (Raylib.IsKeyPressed(KeyboardKey.Three) && money >= 250)
         {
-            fishes.Add(new LargeFish(x, y));
+            fishes.Add(new CarnivoreFish(x, y));
             money -= 250;
         }
 

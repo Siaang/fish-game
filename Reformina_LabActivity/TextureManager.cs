@@ -59,7 +59,7 @@ public class FishTextureHandler
         };
 
         // LargeFish sprite (just one)
-        fishTextures["LargeFish"] = new Texture2D[] {
+        fishTextures["CarnivoreFish"] = new Texture2D[] {
             Raylib.LoadTexture("assets/large_fish.png")
         };
     }

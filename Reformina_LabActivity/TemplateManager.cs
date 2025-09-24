@@ -210,6 +210,26 @@ public class Fish
         }
     }
 
+    public void MoveTowards(float targetX, float targetY, float speed)
+    {
+        Vector2 currentPos = new Vector2(x, y);
+        Vector2 targetPos = new Vector2(targetX, targetY);
+
+        Vector2 direction = targetPos - currentPos;
+
+        if (direction.Length() > 0.01f)
+        {
+            direction = Vector2.Normalize(direction); // get direction unit vector
+            float moveSpeed = speed * Raylib.GetFrameTime();
+            x += direction.X * moveSpeed;
+            y += direction.Y * moveSpeed;
+
+            // update facing direction (flip sprite)
+            this.direction = direction.X >= 0 ? 1 : -1;
+        }
+    }
+
+
     protected virtual FoodPellets FindNearestPellet(List<FoodPellets> pellets)
     {
         FoodPellets closest = null;
@@ -228,12 +248,45 @@ public class Fish
         return closest;
     }
 
-    public virtual bool IsCollidingWith(FoodPellets pellet)
+    public static Fish FindNearestPrey(CarnivoreFish predator, List<Fish> fishes)
+    {
+        Fish closest = null;
+        float minDist = float.MaxValue;
+
+        foreach (var fish in fishes)
+        {
+            if (fish is SmallFish basic && !basic.isAdult)
+            {
+                float dist = Vector2.Distance(
+                    new Vector2(predator.x, predator.y),
+                    new Vector2(basic.x, basic.y)
+                );
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    closest = basic;
+                }
+            }
+        }
+
+        return closest;
+    }
+
+    
+    public virtual bool IsCollidingWith(Fish otherFish)
     {
         Rectangle fishRect = new Rectangle(x, y, sprite.Width * scale, sprite.Height * scale);
-        Rectangle pelletRect = new Rectangle(pellet.x, pellet.y, 8, 8);
-        return Raylib.CheckCollisionRecs(fishRect, pelletRect);
+        Rectangle otherRect = new Rectangle(otherFish.x, otherFish.y, otherFish.sprite.Width * otherFish.scale, otherFish.sprite.Height * otherFish.scale);
+        return Raylib.CheckCollisionRecs(fishRect, otherRect);
     }
+    
+    public virtual bool IsCollidingWith(FoodPellets pellet)
+{
+    Rectangle fishRect = new Rectangle(x, y, sprite.Width * scale, sprite.Height * scale);
+    Rectangle pelletRect = new Rectangle(pellet.x, pellet.y, 8, 8);
+    return Raylib.CheckCollisionRecs(fishRect, pelletRect);
+}
+
 
     public virtual void Draw()
     {
@@ -254,7 +307,7 @@ public class Fish
 
         if (isDead)
         {
-            src.Height = -Math.Abs(src.Height); 
+            src.Height = -Math.Abs(src.Height);
         }
 
         Raylib.DrawTexturePro(sprite, src, dest, new Vector2(0, 0), 0f, Color.White);

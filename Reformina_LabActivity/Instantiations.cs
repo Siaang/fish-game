@@ -7,7 +7,7 @@ using System.Collections.Generic;
 class BronzeCoin : Coin
 {
     public BronzeCoin(float x, float y)
-        : base("assets/coin_bronze.png", x, y, 15) { }
+        : base("assets/coin_bronze.png", x, y, 200) { }
 }
 
 // ---------- SILVER COIN -----------
@@ -47,7 +47,7 @@ class SmallFish : Fish
     {
         maxHp = 50;
         hp = maxHp;
-        lifespan = 100f;
+        lifespan = 120f;
     }
 }
 
@@ -66,12 +66,12 @@ class MediumFish : Fish
     { 
         maxHp = 80; 
         hp = maxHp;
-        lifespan = 140f; 
+        lifespan = 160f; 
     }
 }
 
 //---------- LARGE FISH -----------
-class LargeFish : Fish
+public class CarnivoreFish : Fish
 {
     private static FishTextureHandler? textureHandler;
 
@@ -80,8 +80,8 @@ class LargeFish : Fish
         textureHandler = handler;
     }
 
-    public LargeFish(float startX, float startY)
-        : base(textureHandler!.GetRandomTexture("largeFish"), startX, startY)
+    public CarnivoreFish(float startX, float startY)
+        : base(textureHandler!.GetRandomTexture("CarnivoreFish"), startX, startY)
     { 
         maxHp = 110; 
         hp = maxHp;
