@@ -165,7 +165,7 @@ public class GameManager
     public void Draw()
     {
         // Game over 
-        if (money <= 0 || fishes.Count == 0)
+        if (fishes.Count == 0)
         {
             Raylib.DrawRectangle(0, 0, screenWidth, screenHeight, Color.White);
             Raylib.DrawText("Game over! Press R To restart",
