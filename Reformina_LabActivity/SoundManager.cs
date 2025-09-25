@@ -4,17 +4,13 @@ using System.Collections.Generic;
 public class SoundManager
 {
     private Music bgMusic;
-    private Dictionary<string, Sound> soundEffects = new Dictionary<string, Sound>();
+    private Dictionary<string, Sound> soundEffects = new();
 
     public void LoadAudio()
     {
-        Raylib.InitAudioDevice();
-
-        // Load background music
         bgMusic = Raylib.LoadMusicStream("assets/music/Flask77-BG.mp3");
         Raylib.PlayMusicStream(bgMusic);
 
-        // Load sound effects
         soundEffects["click"] = Raylib.LoadSound("assets/music/click.wav");
         soundEffects["buyFish"] = Raylib.LoadSound("assets/music/buyFish.wav");
         soundEffects["coin1"] = Raylib.LoadSound("assets/music/coin1.wav");
@@ -29,6 +25,19 @@ public class SoundManager
         Raylib.UpdateMusicStream(bgMusic);
     }
 
+    public void Dispose()
+    {
+        Raylib.StopMusicStream(bgMusic);
+        Raylib.UnloadMusicStream(bgMusic);
+
+        foreach (var sound in soundEffects.Values)
+        {
+            Raylib.UnloadSound(sound);
+        }
+
+        soundEffects.Clear();
+    }
+    
     public void PlaySound(string name)
 
 

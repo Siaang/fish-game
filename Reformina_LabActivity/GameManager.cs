@@ -24,6 +24,22 @@ public class GameManager
         screenWidth = width;
         screenHeight = height;
 
+        newGame();
+      
+    }
+
+    public void newGame()
+    {
+        // Dispose old maangers
+        if (uiTextures != null) uiTextures.Dispose();
+        if (fishTextures != null) fishTextures.Dispose();
+        if (soundManager != null) soundManager.Dispose(); 
+
+        money = 100;
+        fishes = new List<Fish>();
+        coins = new List<Coin>();
+        pellets = new List<FoodPellets>();
+
         // Load UI Texture Manager
         uiTextures = new UITextureHandler();
 
@@ -51,6 +67,12 @@ public class GameManager
 
         float x = Raylib.GetRandomValue(0, screenWidth - 50);
         float y = Raylib.GetRandomValue(100, screenHeight - 100);
+
+        // Game over
+        if ((money <= 0 || fishes.Count == 0) && Raylib.IsKeyPressed(KeyboardKey.R))
+        {
+            newGame();
+        }
 
         // Input: buy fish
         if (Raylib.IsKeyPressed(KeyboardKey.One) && money >= 50)
@@ -142,6 +164,16 @@ public class GameManager
 
     public void Draw()
     {
+        // Game over 
+        if (money <= 0 || fishes.Count == 0)
+        {
+            Raylib.DrawRectangle(0, 0, screenWidth, screenHeight, Color.White);
+            Raylib.DrawText("Game over! Press R To restart",
+                screenWidth - 750, screenHeight / 2, 40, Color.Red);
+
+            return;
+        }
+
         // Draw bg
         Rectangle src = new Rectangle(0, 0, uiTextures.Bg.Width, uiTextures.Bg.Height);
         Rectangle dest = new Rectangle(0, 0, screenWidth, screenHeight);
@@ -164,7 +196,6 @@ public class GameManager
         // Draw pellets
         foreach (var pellet in pellets)
             pellet.Draw();
-
     }
 
     public void Dispose()
