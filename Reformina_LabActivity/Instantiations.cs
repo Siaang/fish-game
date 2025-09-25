@@ -7,7 +7,7 @@ using System.Collections.Generic;
 class BronzeCoin : Coin
 {
     public BronzeCoin(float x, float y)
-        : base("assets/coin_bronze.png", x, y, 500) { }
+        : base("assets/coin_bronze.png", x, y, 15) { }
 }
 
 // ---------- SILVER COIN -----------
@@ -24,7 +24,7 @@ class GoldCoin : Coin
         : base("assets/coin_gold.png", x, y, 35) { }
 }
 
-class Poop : Coin
+public class Poop : Coin
 {
     public Poop(float x, float y)
         : base("assets/poop.png", x, y, -15) { }
@@ -33,9 +33,9 @@ class Poop : Coin
     {
         y -= 1f;
 
-        if (y < 70f)
+        if (y < 20f)
         {
-            y = 70f; 
+            y = 20f; 
         }
 
         timer += Raylib.GetFrameTime();
@@ -88,7 +88,7 @@ class MediumFish : Fish
     }
 }
 
-//---------- LARGE FISH -----------
+//---------- CARNIVORE FISH -----------
 public class CarnivoreFish : Fish
 {
     private static FishTextureHandler? textureHandler;
@@ -104,6 +104,26 @@ public class CarnivoreFish : Fish
         maxHp = 110;
         hp = maxHp;
         lifespan = 140f;
+    }
+}
+
+public class JanitorFish : Fish
+{
+    public Poop currentTargetPoop;
+
+    private static FishTextureHandler? textureHandler;
+
+    public static void SetTextureHandler(FishTextureHandler handler)
+    {
+        textureHandler = handler;
+    }
+
+     public JanitorFish(float startX, float startY)
+        : base(textureHandler!.GetRandomTexture("JanitorFish"), startX, startY)
+    {
+        maxHp = 90;
+        hp = maxHp;
+        lifespan = 160f;
     }
 }
 

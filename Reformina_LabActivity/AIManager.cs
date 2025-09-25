@@ -81,7 +81,7 @@ public class AISystem
             {
                 //fish.playSound("poop");
                 coins.Add(new Poop(fish.x, fish.y)); 
-                fish.poopTimer = 2f + (float)new Random().NextDouble() * 3f; 
+                fish.poopTimer = 10f + (float)new Random().NextDouble() * 3f; 
             }
             else
             {
@@ -103,9 +103,9 @@ public class AISystem
                     HandleCarnivore(carnivore, deltaTime, fishes);
                     break;
 
-                // case JanitorFish janitor:
-                //     HandleJanitor(janitor);
-                //     break;
+                case JanitorFish janitor:
+                    HandleJanitor(janitor);
+                    break;
             }
         }
     }
@@ -175,6 +175,7 @@ public class AISystem
 
                 if (fish.IsCollidingWith(prey))
                 {
+                    //PlaySingle.PlaySound("FishEat");
                     fish.hp = Math.Clamp(fish.hp + 50, 0, fish.maxHp);
                     fishes.Remove(prey);
                     fish.hungerTimer = 15f;
@@ -187,21 +188,33 @@ public class AISystem
         }
     }
 
-    // private void HandleJanitor(JanitorFish fish)
-    // {
-    //     fish.currentState = FishState.Swim;
+    private void HandleJanitor(JanitorFish fish)
+    {
+        if (fish.currentTargetPoop == null || !coins.Contains(fish.currentTargetPoop))
+        {
+            fish.currentTargetPoop = FindNearestPoop(fish);
+        }
 
-    //     Poop targetPoop = FindNearestPoop(fish);
-    //     if (targetPoop != null)
-    //     {
-    //         fish.MoveTowards(targetPoop.x, targetPoop.y);
-    //         if (fish.IsCollidingWith(targetPoop))
-    //         {
-    //             coins.Add(new SilverCoin(fish.x, fish.y, 5));
-    //             coins.Remove(targetPoop);
-    //         }
-    //     }
-    // }
+        if (fish.currentTargetPoop == null)
+        {
+            fish.currentState = FishState.Swim;
+            return;
+        }
+
+        Poop targetPoop = fish.currentTargetPoop;
+        fish.currentState = FishState.Hungry;
+        fish.MoveTowards(targetPoop.X, targetPoop.Y, 60f);
+
+        if (fish.IsCollidingWith(targetPoop))
+        {
+            Console.WriteLine("JanitorFish ate poop!");
+            coins.Add(new SilverCoin(fish.x, fish.y));
+            coins.Remove(targetPoop);
+            fish.hp = Math.Clamp(fish.hp + 10, 0, fish.maxHp);
+
+            fish.currentTargetPoop = null;
+        }
+    }
 
     private T FindNearestPellet<T>(Fish fish) where T : FoodPellets
     {
@@ -245,24 +258,24 @@ public class AISystem
         return closest;
     }
 
-    // private Poop FindNearestPoop(Fish fish)
-    // {
-    //     Poop closest = null;
-    //     float minDist = float.MaxValue;
+    private Poop FindNearestPoop(Fish fish)
+    {
+        Poop closest = null;
+        float minDist = float.MaxValue;
 
-    //     foreach (var coin in coins)
-    //     {
-    //         if (coin is Poop poop)
-    //         {
-    //             float dist = Vector2.Distance(new Vector2(fish.x, fish.y), new Vector2(poop.x, poop.y));
-    //             if (dist < minDist)
-    //             {
-    //                 minDist = dist;
-    //                 closest = poop;
-    //             }
-    //         }
-    //     }
+        foreach (var coin in coins)
+        {
+            if (coin is Poop poop)
+            {
+                float dist = Vector2.Distance(new Vector2(fish.x, fish.y), new Vector2(poop.X, poop.Y));
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    closest = poop;
+                }
+            }
+        }
 
-    //     return closest;
-    // }
+        return closest;
+    }
 }

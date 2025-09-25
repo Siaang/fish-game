@@ -31,9 +31,10 @@ public class GameManager
         SmallFish.SetTextureHandler(fishTextures);
         MediumFish.SetTextureHandler(fishTextures);
         CarnivoreFish.SetTextureHandler(fishTextures);
+        JanitorFish.SetTextureHandler(fishTextures);
 
         // AI 
-         aiSystem = new AISystem(fishes, pellets, coins);
+        aiSystem = new AISystem(fishes, pellets, coins);
 
         // Start with one fish
         fishes.Add(new SmallFish(400, 300));
@@ -62,9 +63,15 @@ public class GameManager
             fishes.Add(new CarnivoreFish(x, y));
             money -= 250;
         }
+        
+         if (Raylib.IsKeyPressed(KeyboardKey.Four) && money >= 300)
+        {
+            fishes.Add(new JanitorFish(x, y));
+            money -= 300;
+        }
 
         // Update fish + coins
-         aiSystem.Update(fishes, coins, pellets);
+        aiSystem.Update(fishes, coins, pellets);
         foreach (var fish in fishes) fish.Update(coins, pellets, fish.GetType().Name);
         foreach (var coin in coins) coin.Update();
 
@@ -131,11 +138,11 @@ public class GameManager
         foreach (var coin in coins) coin.Draw();
 
         // Draw UI
-        Raylib.DrawText($"Money: {money}", 10, screenHeight - 20, 20, Color.White);
-        Raylib.DrawTexture(uiTextures.SmallFishIcon, 220, 30, Color.White);
-        Raylib.DrawTexture(uiTextures.MediumFishIcon, 290, 30, Color.White);
-        Raylib.DrawTexture(uiTextures.LargeFishIcon, 410, 10, Color.White);
-        Raylib.DrawTexture(uiTextures.MassiveFishIcon, 530, 10, Color.White);
+        Raylib.DrawText($"Money: {money}", screenWidth - 140, screenHeight - 20, 20, Color.White);
+        Raylib.DrawTexture(uiTextures.SmallFishIcon, 10, screenHeight - 50, Color.White);
+        Raylib.DrawTexture(uiTextures.MediumFishIcon, 50, screenHeight - 50, Color.White);
+        Raylib.DrawTexture(uiTextures.CarnivoreFishIcon, 120, screenHeight - 70, Color.White);
+        Raylib.DrawTexture(uiTextures.JanitorFishIcon, 200, screenHeight - 60, Color.White);
 
         Raylib.DrawTexture(uiTextures.greenPelletIcon, 790, 520, Color.White);
         Raylib.DrawTexture(uiTextures.redPelletIcon, 840, 520, Color.White);

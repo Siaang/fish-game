@@ -8,6 +8,12 @@ public class Coin
     private Texture2D spriteSheet;
     protected float x, y;
 
+    public float X => x;
+    public float Y => y;
+    public Texture2D Sprite => spriteSheet; 
+    public int FrameWidth => frameWidth;
+    public int FrameHeight => frameHeight;
+
     // Frames 
     protected int frameWidth, frameHeight;
     protected int currentFrame = 0;
@@ -87,7 +93,7 @@ public class Fish
     public float maxHp = 100;
     public float hungerTimer = 1f;
     public float coinTimer = 5f;
-    public float poopTimer = 2f;
+    public float poopTimer = 10f;
     public float scale = 0.5f;
     protected float speed = 2f;
     public int direction = 1;
@@ -281,6 +287,13 @@ public class Fish
         return Raylib.CheckCollisionRecs(fishRect, pelletRect);
     }
 
+    public virtual bool IsCollidingWith(Poop other)
+    {
+        Rectangle fishRect = new Rectangle(x, y, sprite.Width * scale, sprite.Height * scale);
+        Rectangle poopRect = new Rectangle(other.X, other.Y, 16, 16); 
+        return Raylib.CheckCollisionRecs(fishRect, poopRect);
+    }
+
     public virtual void Draw()
     {
         Color tintColor = isDead ? new Color(150, 150, 150, 255) : Color.White;
@@ -314,17 +327,17 @@ public class Fish
         }
         Raylib.DrawRectangle(
             (int)x,
-            (int)y + 46,
+            (int)y + (int)(sprite.Height * 2) + 12,  
             (int)(sprite.Width * 2 * lifePercent),
             5,
             Color.Yellow
         );
 
-        // HP 
+        // HP bar
         float hpPercent = Math.Clamp(hp / maxHp, 0f, 1f);
         Raylib.DrawRectangle(
             (int)x,
-            (int)y + 40,
+            (int)y + (int)(sprite.Height * 2) + 5, 
             (int)(sprite.Width * 2 * hpPercent),
             5,
             Color.Green

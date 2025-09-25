@@ -7,8 +7,8 @@ public class UITextureHandler
     // Fish
     public Texture2D SmallFishIcon { get; private set; }
     public Texture2D MediumFishIcon { get; private set; }
-    public Texture2D LargeFishIcon { get; private set; }
-    public Texture2D MassiveFishIcon { get; private set; }
+    public Texture2D CarnivoreFishIcon { get; private set; }
+    public Texture2D JanitorFishIcon { get; private set; }
 
     // Pellets
     public Texture2D greenPelletIcon { get; private set; }
@@ -20,8 +20,8 @@ public class UITextureHandler
 
         SmallFishIcon = Raylib.LoadTexture("assets/smallFish_buy.png");
         MediumFishIcon = Raylib.LoadTexture("assets/mediumFish_buy.png");
-        LargeFishIcon = Raylib.LoadTexture("assets/largeFish_buy.png");
-        MassiveFishIcon = Raylib.LoadTexture("assets/massiveFish_buy.png");
+        CarnivoreFishIcon = Raylib.LoadTexture("assets/largeFish_buy.png");
+        JanitorFishIcon = Raylib.LoadTexture("assets/janitorFish_buy.png");
 
         greenPelletIcon = Raylib.LoadTexture("assets/greenPelletIcon.png");
         redPelletIcon = Raylib.LoadTexture("assets/redPelletIcon.png");
@@ -32,8 +32,9 @@ public class UITextureHandler
         Raylib.UnloadTexture(Bg);
         Raylib.UnloadTexture(SmallFishIcon);
         Raylib.UnloadTexture(MediumFishIcon);
-        Raylib.UnloadTexture(LargeFishIcon);
-        Raylib.UnloadTexture(MassiveFishIcon);
+        Raylib.UnloadTexture(CarnivoreFishIcon);
+        Raylib.UnloadTexture(JanitorFishIcon);
+
         Raylib.UnloadTexture(greenPelletIcon);
         Raylib.UnloadTexture(redPelletIcon);
     }
@@ -58,9 +59,14 @@ public class FishTextureHandler
             Raylib.LoadTexture("assets/medium_fish2.png")
         };
 
-        // LargeFish sprite (just one)
+        // LargeFish sprite 
         fishTextures["CarnivoreFish"] = new Texture2D[] {
             Raylib.LoadTexture("assets/large_fish.png")
+        };
+
+        //JanitorFish sprite
+        fishTextures["JanitorFish"] = new Texture2D[] {
+            Raylib.LoadTexture("assets/janitor_fish.png")
         };
     }
 
