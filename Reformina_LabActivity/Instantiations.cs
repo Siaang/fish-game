@@ -28,6 +28,24 @@ class Poop : Coin
 {
     public Poop(float x, float y)
         : base("assets/poop.png", x, y, -15) { }
+
+    public override void Update()
+    {
+        y -= 1f;
+
+        if (y < 70f)
+        {
+            y = 70f; 
+        }
+
+        timer += Raylib.GetFrameTime();
+        if (timer >= frameTime)
+        {
+            currentFrame++;
+            if (currentFrame >= maxFrames) currentFrame = 0;
+            timer = 0f;
+        }
+    }
 }
 
 //====================================================================
@@ -82,9 +100,11 @@ public class CarnivoreFish : Fish
 
     public CarnivoreFish(float startX, float startY)
         : base(textureHandler!.GetRandomTexture("CarnivoreFish"), startX, startY)
-    { 
-        maxHp = 110; 
+    {
+        maxHp = 110;
         hp = maxHp;
         lifespan = 10f;
     }
 }
+
+

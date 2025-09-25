@@ -81,7 +81,7 @@ public class AISystem
             {
                 //fish.playSound("poop");
                 coins.Add(new Poop(fish.x, fish.y)); 
-                fish.poopTimer = 10f + (float)new Random().NextDouble() * 3f; 
+                fish.poopTimer = 2f + (float)new Random().NextDouble() * 3f; 
             }
             else
             {

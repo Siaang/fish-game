@@ -6,7 +6,7 @@ using Raylib_cs;
 public class Coin
 {
     private Texture2D spriteSheet;
-    private float x, y;
+    protected float x, y;
 
     // Frames 
     protected int frameWidth, frameHeight;
@@ -87,7 +87,7 @@ public class Fish
     public float maxHp = 100;
     public float hungerTimer = 1f;
     public float coinTimer = 5f;
-    public float poopTimer = 10f;
+    public float poopTimer = 2f;
     public float scale = 0.5f;
     protected float speed = 2f;
     public int direction = 1;
