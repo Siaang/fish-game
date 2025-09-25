@@ -107,7 +107,7 @@ public class Fish
         sprite = texture;
         x = startX;
         y = startY;
-        maxHp = 100; 
+        maxHp = 100;
         hp = maxHp;
 
     }
@@ -194,24 +194,24 @@ public class Fish
                     }
                 }
                 break;
-            }
         }
+    }
 
     public void Dead()
+    {
+        hp = 0;
+        direction = 1;
+        y -= 20 * Raylib.GetFrameTime();
+        if (!triggered)
         {
-            hp = 0;
-            direction = 1; 
-            y -= 20 * Raylib.GetFrameTime();
-            if (!triggered)
-            {
-                //PlaySingle.PlaySound("FishDeath");
-                triggered = true;
-            }
-            if (y <= 30)
-            {
-                isActive = false;
-            }
+            //PlaySingle.PlaySound("FishDeath");
+            triggered = true;
         }
+        if (y <= 30)
+        {
+            isActive = false;
+        }
+    }
 
     public void MoveTowards(float targetX, float targetY, float speed)
     {
@@ -222,7 +222,7 @@ public class Fish
 
         if (direction.Length() > 0.01f)
         {
-            direction = Vector2.Normalize(direction); 
+            direction = Vector2.Normalize(direction);
             float moveSpeed = speed * Raylib.GetFrameTime();
             x += direction.X * moveSpeed;
             y += direction.Y * moveSpeed;
@@ -279,7 +279,7 @@ public class Fish
         Rectangle otherRect = new Rectangle(otherFish.x, otherFish.y, otherFish.sprite.Width * otherFish.scale, otherFish.sprite.Height * otherFish.scale);
         return Raylib.CheckCollisionRecs(fishRect, otherRect);
     }
-    
+
     public virtual bool IsCollidingWith(FoodPellets pellet)
     {
         Rectangle fishRect = new Rectangle(x, y, sprite.Width * scale, sprite.Height * scale);
@@ -290,7 +290,7 @@ public class Fish
     public virtual bool IsCollidingWith(Poop other)
     {
         Rectangle fishRect = new Rectangle(x, y, sprite.Width * scale, sprite.Height * scale);
-        Rectangle poopRect = new Rectangle(other.X, other.Y, 16, 16); 
+        Rectangle poopRect = new Rectangle(other.X, other.Y, 16, 16);
         return Raylib.CheckCollisionRecs(fishRect, poopRect);
     }
 
@@ -327,7 +327,7 @@ public class Fish
         }
         Raylib.DrawRectangle(
             (int)x,
-            (int)y + (int)(sprite.Height * 2) + 12,  
+            (int)y + (int)(sprite.Height * 2) + 12,
             (int)(sprite.Width * 2 * lifePercent),
             5,
             Color.Yellow
@@ -337,7 +337,7 @@ public class Fish
         float hpPercent = Math.Clamp(hp / maxHp, 0f, 1f);
         Raylib.DrawRectangle(
             (int)x,
-            (int)y + (int)(sprite.Height * 2) + 5, 
+            (int)y + (int)(sprite.Height * 2) + 5,
             (int)(sprite.Width * 2 * hpPercent),
             5,
             Color.Green

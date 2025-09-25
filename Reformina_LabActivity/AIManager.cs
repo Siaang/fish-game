@@ -12,12 +12,14 @@ public class AISystem
     private List<Fish> fishes;
     private List<FoodPellets> pellets;
     private List<Coin> coins;
+    private SoundManager soundManager;
 
-    public AISystem(List<Fish> fishes, List<FoodPellets> pellets, List<Coin> coins)
+    public AISystem(List<Fish> fishes, List<FoodPellets> pellets, List<Coin> coins, SoundManager soundManager)
     {
         this.fishes = fishes;
         this.pellets = pellets;
         this.coins = coins;
+        this.soundManager = soundManager;
     }
 
     public void Update(List<Fish> fishes, List<Coin> coins, List<FoodPellets> pellets)
@@ -36,13 +38,14 @@ public class AISystem
                 fish.hp -= 1;
                 fish.hpTimer = 1f;
             }
-            
+
             if (fish.hp <= 0 || fish.age >= fish.lifespan)
             {
                 fish.isDead = true;
                 fish.Dead();
+                soundManager.PlaySound("die");
             }
-            else 
+            else
             {
                 if (fish.hp <= 80)
                     fish.currentState = FishState.Hungry;
@@ -58,16 +61,19 @@ public class AISystem
             if (fish.isAdult && fish.coinTimer <= 0)
                 {
                     coins.Add(new GoldCoin(fish.x, fish.y));
+                    soundManager.PlaySound("drop");
                     fish.coinTimer = 12f + (float)new Random().NextDouble() * 8f;
                 }
                 else if (!fish.isAdult && fish.coinTimer <= 0 && !(fish is SmallFish))
                 {
                     coins.Add(new SilverCoin(fish.x, fish.y));
+                    soundManager.PlaySound("drop");
                     fish.coinTimer = 8f + (float)new Random().NextDouble() * 10f;
                 }
                 else if (fish is SmallFish && fish.coinTimer <= 0)
                 {
                     coins.Add(new BronzeCoin(fish.x, fish.y));
+                    soundManager.PlaySound("drop");
                     fish.coinTimer = 5f + (float)new Random().NextDouble() * 12f;
                 }
                 else
@@ -79,7 +85,7 @@ public class AISystem
             // Poop drop
             if (fish.poopTimer <= 0 && !fish.isDead)
             {
-                //fish.playSound("poop");
+                soundManager.PlaySound("poop");
                 coins.Add(new Poop(fish.x, fish.y)); 
                 fish.poopTimer = 10f + (float)new Random().NextDouble() * 3f; 
             }
@@ -120,7 +126,7 @@ public class AISystem
             if (fish.IsCollidingWith(pellet) && fish.hp < 70)
             {
                 Console.WriteLine("Basic fish eating pellet");
-                //PlaySingle.PlaySound("FishEat");
+                soundManager.PlaySound("FishEat");
                 fish.hp = Math.Clamp(fish.hp + 25, 0,100); 
                 pellets.RemoveAt(i);
                 break; 
@@ -144,7 +150,7 @@ public class AISystem
             if (fish.IsCollidingWith(pellet) && fish.hp < 70)
             {
                 Console.WriteLine("Basic fish eating pellet");
-                //PlaySingle.PlaySound("FishEat");
+                soundManager.PlaySound("FishEat");
                 fish.hp = Math.Clamp(fish.hp + 25, 0, 100);
                 pellets.RemoveAt(i);
                 break;
@@ -175,7 +181,7 @@ public class AISystem
 
                 if (fish.IsCollidingWith(prey))
                 {
-                    //PlaySingle.PlaySound("FishEat");
+                    soundManager.PlaySound("FishEat");
                     fish.hp = Math.Clamp(fish.hp + 50, 0, fish.maxHp);
                     fishes.Remove(prey);
                     fish.hungerTimer = 15f;
@@ -207,6 +213,7 @@ public class AISystem
 
         if (fish.IsCollidingWith(targetPoop))
         {
+            soundManager.PlaySound("FishEat");
             Console.WriteLine("JanitorFish ate poop!");
             coins.Add(new SilverCoin(fish.x, fish.y));
             coins.Remove(targetPoop);

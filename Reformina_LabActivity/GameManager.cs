@@ -17,6 +17,7 @@ public class GameManager
     private UITextureHandler uiTextures;
     private FishTextureHandler fishTextures;
     private AISystem aiSystem;
+    private SoundManager soundManager;
 
     public GameManager(int width, int height)
     {
@@ -33,8 +34,12 @@ public class GameManager
         CarnivoreFish.SetTextureHandler(fishTextures);
         JanitorFish.SetTextureHandler(fishTextures);
 
+        // Sound
+        soundManager = new SoundManager();
+        soundManager.LoadAudio();
+
         // AI 
-        aiSystem = new AISystem(fishes, pellets, coins);
+        aiSystem = new AISystem(fishes, pellets, coins, soundManager);
 
         // Start with one fish
         fishes.Add(new SmallFish(400, 300));
@@ -42,6 +47,8 @@ public class GameManager
 
     public void Update()
     {
+        soundManager.Update();
+
         float x = Raylib.GetRandomValue(0, screenWidth - 50);
         float y = Raylib.GetRandomValue(100, screenHeight - 100);
 
@@ -50,24 +57,28 @@ public class GameManager
         {
             fishes.Add(new SmallFish(x, y));
             money -= 50;
+            soundManager.PlaySound("buyFish");
         }
 
         if (Raylib.IsKeyPressed(KeyboardKey.Two) && money >= 150)
         {
             fishes.Add(new MediumFish(x, y));
             money -= 150;
+            soundManager.PlaySound("buyFish");
         }
 
         if (Raylib.IsKeyPressed(KeyboardKey.Three) && money >= 250)
         {
             fishes.Add(new CarnivoreFish(x, y));
             money -= 250;
+            soundManager.PlaySound("buyFish");
         }
-        
-         if (Raylib.IsKeyPressed(KeyboardKey.Four) && money >= 300)
+
+        if (Raylib.IsKeyPressed(KeyboardKey.Four) && money >= 300)
         {
             fishes.Add(new JanitorFish(x, y));
             money -= 300;
+            soundManager.PlaySound("buyFish");
         }
 
         // Update fish + coins
@@ -84,6 +95,7 @@ public class GameManager
             {
                 if (coins[i].IsClicked(mouse))
                 {
+                    soundManager.PlaySound("coin1");
                     money += coins[i].Value;
                     coins.RemoveAt(i);
                 }
@@ -102,7 +114,8 @@ public class GameManager
                 float pelletY = 70;
                 pellets.Add(new BigFoodPellet(pelletX, pelletY));
 
-                money -= 3;
+                money -= 5;
+                soundManager.PlaySound("click");
             }
 
             if (Raylib.CheckCollisionPointRec(mouse, redPelletRect) && money >= 7)
@@ -111,7 +124,8 @@ public class GameManager
                 float pelletY = 90;
                 pellets.Add(new SmallFoodPellet(pelletX, pelletY));
 
-                money -= 7;
+                money -= 10;
+                soundManager.PlaySound("click");
             }
         }
 

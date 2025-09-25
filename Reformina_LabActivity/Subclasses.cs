@@ -7,21 +7,21 @@ using System.Collections.Generic;
 class BronzeCoin : Coin
 {
     public BronzeCoin(float x, float y)
-        : base("assets/coin_bronze.png", x, y, 15) { }
+        : base("assets/coin_bronze.png", x, y, 20) { }
 }
 
 // ---------- SILVER COIN -----------
 class SilverCoin : Coin
 {
     public SilverCoin(float x, float y)
-        : base("assets/coin_silver.png", x, y, 25) { }   
+        : base("assets/coin_silver.png", x, y, 30) { }   
 }
 
 // ---------- GOLD COIN -----------
 class GoldCoin : Coin
 {
     public GoldCoin(float x, float y)
-        : base("assets/coin_gold.png", x, y, 35) { }
+        : base("assets/coin_gold.png", x, y, 50) { }
 }
 
 public class Poop : Coin
