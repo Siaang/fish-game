@@ -132,6 +132,12 @@ public class AISystem
     {
         fish.currentState = fish.hp <= fish.maxHp-(fish.maxHp/4) ? FishState.Hungry : FishState.Swim;
 
+        if (!fish.isAdult && fish.age >= 60f)
+        {
+            fish.isAdult = true;
+            Console.WriteLine("MediumFish became an adult!");
+        }
+
         for (int i = pellets.Count - 1; i >= 0; i--)
         {
             FoodPellets pellet = pellets[i];
@@ -139,18 +145,23 @@ public class AISystem
             {
                 Console.WriteLine("Basic fish eating pellet");
                 //PlaySingle.PlaySound("FishEat");
-                fish.hp = Math.Clamp(fish.hp + 25, 0,100); 
+                fish.hp = Math.Clamp(fish.hp + 25, 0, 100);
                 pellets.RemoveAt(i);
-                break; 
+                break;
             }
         }
-
     }
     
 
     private void HandleCarnivore(CarnivoreFish fish, float deltaTime, List<Fish> fishes)
     {
         fish.hungerTimer -= deltaTime;
+
+        if (!fish.isAdult && fish.age >= 100f)
+        {
+            fish.isAdult = true;
+            Console.WriteLine("CarnivoreFish became an adult!");
+        }
 
         if (fish.hungerTimer <= 0)
         {

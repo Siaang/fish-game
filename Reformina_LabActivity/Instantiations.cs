@@ -65,7 +65,7 @@ class SmallFish : Fish
     {
         maxHp = 50;
         hp = maxHp;
-        lifespan = 10f;
+        lifespan = 80f;
     }
 }
 
@@ -84,7 +84,7 @@ class MediumFish : Fish
     { 
         maxHp = 80; 
         hp = maxHp;
-        lifespan = 10f; 
+        lifespan = 120f; 
     }
 }
 
@@ -103,7 +103,7 @@ public class CarnivoreFish : Fish
     {
         maxHp = 110;
         hp = maxHp;
-        lifespan = 10f;
+        lifespan = 140f;
     }
 }
 

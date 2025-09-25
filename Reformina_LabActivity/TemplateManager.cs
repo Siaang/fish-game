@@ -188,8 +188,8 @@ public class Fish
                     }
                 }
                 break;
+            }
         }
-    }
 
     public void Dead()
         {
@@ -216,12 +216,11 @@ public class Fish
 
         if (direction.Length() > 0.01f)
         {
-            direction = Vector2.Normalize(direction); // get direction unit vector
+            direction = Vector2.Normalize(direction); 
             float moveSpeed = speed * Raylib.GetFrameTime();
             x += direction.X * moveSpeed;
             y += direction.Y * moveSpeed;
 
-            // update facing direction (flip sprite)
             this.direction = direction.X >= 0 ? 1 : -1;
         }
     }
