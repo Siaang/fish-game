@@ -5,7 +5,6 @@ public enum FishState
 {
     Idle,
     Swim,
-    Dead,
     Hungry,
 }
 public class AISystem
@@ -37,36 +36,44 @@ public class AISystem
                 fish.hp -= 1;
                 fish.hpTimer = 1f;
             }
-            if (fish.hp <= 80 && fish.hp > 0)
-            {
-                fish.currentState = FishState.Hungry;
-            }  else
-            {
-                fish.currentState = FishState.Swim;
-            }
             
+            if (fish.hp <= 0 || fish.age >= fish.lifespan)
+            {
+                fish.isDead = true;
+                fish.Dead();
+            }
+            else 
+            {
+                if (fish.hp <= 80)
+                    fish.currentState = FishState.Hungry;
+                else
+                    fish.currentState = FishState.Swim;
+            }
+
             // Growth
          if (!fish.isDead)
         {
+            fish.Move(pellets);
+
             if (fish.isAdult && fish.coinTimer <= 0)
-            {
-                coins.Add(new GoldCoin(fish.x, fish.y));
-                fish.coinTimer = 12f + (float)new Random().NextDouble() * 8f;
-            } 
-            else if (!fish.isAdult && fish.coinTimer <= 0 && !(fish is SmallFish))
-            {
-                coins.Add(new SilverCoin(fish.x, fish.y));
-                fish.coinTimer = 8f + (float)new Random().NextDouble() * 10f;
-            }
-            else if (fish is SmallFish && fish.coinTimer <= 0)
-            {
-                coins.Add(new BronzeCoin(fish.x, fish.y));
-                fish.coinTimer = 5f + (float)new Random().NextDouble() * 12f;
-            }
-            else
-            {
-                fish.coinTimer -= deltaTime;
-            }
+                {
+                    coins.Add(new GoldCoin(fish.x, fish.y));
+                    fish.coinTimer = 12f + (float)new Random().NextDouble() * 8f;
+                }
+                else if (!fish.isAdult && fish.coinTimer <= 0 && !(fish is SmallFish))
+                {
+                    coins.Add(new SilverCoin(fish.x, fish.y));
+                    fish.coinTimer = 8f + (float)new Random().NextDouble() * 10f;
+                }
+                else if (fish is SmallFish && fish.coinTimer <= 0)
+                {
+                    coins.Add(new BronzeCoin(fish.x, fish.y));
+                    fish.coinTimer = 5f + (float)new Random().NextDouble() * 12f;
+                }
+                else
+                {
+                    fish.coinTimer -= deltaTime;
+                }
         }
 
             // Poop drop
@@ -80,34 +87,50 @@ public class AISystem
             {
                 fish.poopTimer -= deltaTime;
             }
-            if (fish.hp <= 0 || fish.age >= fish.lifespan)
-            {
-                fish.isDead = true;
-                fish.currentState = FishState.Dead;
-            }
 
             // AI Behavior
             switch (fish)
             {
-                // case CarnivoreFish carnivore:
-                //     HandleCarnivore(carnivore, deltaTime);
-                //     break;
+                case SmallFish basic:
+                    HandleSmallFish(basic);
+                    break;
+
+                case MediumFish basic:
+                    HandleMediumFish(basic);
+                    break;
+                
+                case CarnivoreFish carnivore:
+                    HandleCarnivore(carnivore, deltaTime, fishes);
+                    break;
 
                 // case JanitorFish janitor:
                 //     HandleJanitor(janitor);
                 //     break;
-
-                case SmallFish basic:
-                    HandleBasicFish(basic);
-                    break;
-    
             }
         }
     }
 
-    private void HandleBasicFish(SmallFish fish)
+    private void HandleSmallFish(SmallFish fish)
     {
-        //fish.currentState = fish.hp <= fish.maxHp-(fish.maxHp/4) ? FishState.Hungry : FishState.Swim;
+        fish.currentState = fish.hp <= fish.maxHp-(fish.maxHp/4) ? FishState.Hungry : FishState.Swim;
+
+        for (int i = pellets.Count - 1; i >= 0; i--)
+        {
+            FoodPellets pellet = pellets[i];
+            if (fish.IsCollidingWith(pellet) && fish.hp < 70)
+            {
+                Console.WriteLine("Basic fish eating pellet");
+                //PlaySingle.PlaySound("FishEat");
+                fish.hp = Math.Clamp(fish.hp + 25, 0,100); 
+                pellets.RemoveAt(i);
+                break; 
+            }
+        }
+    }
+
+    private void HandleMediumFish(MediumFish fish)
+    {
+        fish.currentState = fish.hp <= fish.maxHp-(fish.maxHp/4) ? FishState.Hungry : FishState.Swim;
 
         for (int i = pellets.Count - 1; i >= 0; i--)
         {
@@ -123,34 +146,35 @@ public class AISystem
         }
 
     }
+    
 
     private void HandleCarnivore(CarnivoreFish fish, float deltaTime, List<Fish> fishes)
-{
-    fish.hungerTimer -= deltaTime;
-
-    if (fish.hungerTimer <= 0)
     {
-        fish.currentState = FishState.Hungry;
+        fish.hungerTimer -= deltaTime;
 
-        Fish prey = Fish.FindNearestPrey(fish, fishes); 
-
-        if (prey != null)
+        if (fish.hungerTimer <= 0)
         {
-            fish.MoveTowards(prey.x, prey.y, 80f);
+            fish.currentState = FishState.Hungry;
 
-            if (fish.IsCollidingWith(prey))
+            Fish prey = Fish.FindNearestPrey(fish, fishes);
+
+            if (prey != null)
             {
-                fish.hp = Math.Clamp(fish.hp + 50, 0, fish.maxHp);
-                fishes.Remove(prey);
-                fish.hungerTimer = 15f;
+                fish.MoveTowards(prey.x, prey.y, 80f);
+
+                if (fish.IsCollidingWith(prey))
+                {
+                    fish.hp = Math.Clamp(fish.hp + 50, 0, fish.maxHp);
+                    fishes.Remove(prey);
+                    fish.hungerTimer = 15f;
+                }
             }
         }
+        else
+        {
+            fish.currentState = FishState.Swim;
+        }
     }
-    else
-    {
-        fish.currentState = FishState.Swim;
-    }
-}
 
     // private void HandleJanitor(JanitorFish fish)
     // {

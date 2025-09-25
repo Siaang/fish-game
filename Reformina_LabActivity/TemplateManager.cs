@@ -2,8 +2,6 @@ using System;
 using System.Numerics;
 using Raylib_cs;
 
-
-
 // the base template for the coins
 public class Coin
 {
@@ -110,7 +108,6 @@ public class Fish
 
     public virtual void Update(List<Coin> coins, List<FoodPellets> pellets, string type)
     {
-        Move(pellets);
         y = Math.Clamp(y, 0, Raylib.GetScreenHeight() - (sprite.Height * scale));
 
         if (directionTimer <= 0)
@@ -121,9 +118,9 @@ public class Fish
 
     public virtual void Move(List<FoodPellets> pellets)
     {
-        // ---------- MOVE RANDOMLY -----------
         switch (currentState)
         {
+            // ---------- MOVE RANDOMLY --------
             case FishState.Swim:
                 float swimSpeed = 40f * Raylib.GetFrameTime();
                 x += swimSpeed * direction;
@@ -191,24 +188,24 @@ public class Fish
                     }
                 }
                 break;
-
-            // ---------- die -----------
-            case FishState.Dead:
-                hp = 0;
-                direction = 1; 
-                y -= 20 * Raylib.GetFrameTime();
-                if (!triggered)
-                {
-                    //PlaySingle.PlaySound("FishDeath");
-                    triggered = true;
-                }
-                if (y <= 30)
-                {
-                    isActive = false;
-                }
-                break;
         }
     }
+
+    public void Dead()
+        {
+            hp = 0;
+            direction = 1; 
+            y -= 20 * Raylib.GetFrameTime();
+            if (!triggered)
+            {
+                //PlaySingle.PlaySound("FishDeath");
+                triggered = true;
+            }
+            if (y <= 30)
+            {
+                isActive = false;
+            }
+        }
 
     public void MoveTowards(float targetX, float targetY, float speed)
     {
@@ -228,7 +225,6 @@ public class Fish
             this.direction = direction.X >= 0 ? 1 : -1;
         }
     }
-
 
     protected virtual FoodPellets FindNearestPellet(List<FoodPellets> pellets)
     {
@@ -272,7 +268,6 @@ public class Fish
         return closest;
     }
 
-    
     public virtual bool IsCollidingWith(Fish otherFish)
     {
         Rectangle fishRect = new Rectangle(x, y, sprite.Width * scale, sprite.Height * scale);
@@ -281,12 +276,11 @@ public class Fish
     }
     
     public virtual bool IsCollidingWith(FoodPellets pellet)
-{
-    Rectangle fishRect = new Rectangle(x, y, sprite.Width * scale, sprite.Height * scale);
-    Rectangle pelletRect = new Rectangle(pellet.x, pellet.y, 8, 8);
-    return Raylib.CheckCollisionRecs(fishRect, pelletRect);
-}
-
+    {
+        Rectangle fishRect = new Rectangle(x, y, sprite.Width * scale, sprite.Height * scale);
+        Rectangle pelletRect = new Rectangle(pellet.x, pellet.y, 8, 8);
+        return Raylib.CheckCollisionRecs(fishRect, pelletRect);
+    }
 
     public virtual void Draw()
     {
@@ -312,7 +306,6 @@ public class Fish
 
         Raylib.DrawTexturePro(sprite, src, dest, new Vector2(0, 0), 0f, Color.White);
         Raylib.DrawTexturePro(sprite, src, dest, new Vector2(0, 0), 0f, tintColor);
-
 
         // Lifespan
         float lifePercent = 1f;
