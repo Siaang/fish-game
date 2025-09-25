@@ -107,6 +107,7 @@ public class CarnivoreFish : Fish
     }
 }
 
+// ---------- JANITOR FISH ---------- 
 public class JanitorFish : Fish
 {
     public Poop currentTargetPoop;
@@ -118,8 +119,8 @@ public class JanitorFish : Fish
         textureHandler = handler;
     }
 
-     public JanitorFish(float startX, float startY)
-        : base(textureHandler!.GetRandomTexture("JanitorFish"), startX, startY)
+    public JanitorFish(float startX, float startY)
+       : base(textureHandler!.GetRandomTexture("JanitorFish"), startX, startY)
     {
         maxHp = 90;
         hp = maxHp;

@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using Raylib_cs;
 
-// the base template for the coins
+// ---------- COINS TEMPLATE ----------
 public class Coin
 {
     private Texture2D spriteSheet;
@@ -75,7 +75,7 @@ public class Coin
     }
 }
 
-// the base template for the fishyyy
+// ---------- FISH TEMPLATE ----------
 public class Fish
 {
     protected Texture2D sprite;
@@ -204,7 +204,6 @@ public class Fish
         y -= 20 * Raylib.GetFrameTime();
         if (!triggered)
         {
-            //PlaySingle.PlaySound("FishDeath");
             triggered = true;
         }
         if (y <= 30)
@@ -249,30 +248,7 @@ public class Fish
         return closest;
     }
 
-    public static Fish FindNearestPrey(CarnivoreFish predator, List<Fish> fishes)
-    {
-        Fish closest = null;
-        float minDist = float.MaxValue;
-
-        foreach (var fish in fishes)
-        {
-            if (fish is SmallFish basic && !basic.isAdult)
-            {
-                float dist = Vector2.Distance(
-                    new Vector2(predator.x, predator.y),
-                    new Vector2(basic.x, basic.y)
-                );
-                if (dist < minDist)
-                {
-                    minDist = dist;
-                    closest = basic;
-                }
-            }
-        }
-
-        return closest;
-    }
-
+    // ---------- COLLISION CHECKS ---------- 
     public virtual bool IsCollidingWith(Fish otherFish)
     {
         Rectangle fishRect = new Rectangle(x, y, sprite.Width * scale, sprite.Height * scale);

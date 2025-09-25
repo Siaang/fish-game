@@ -116,9 +116,10 @@ public class AISystem
         }
     }
 
+    // ---------- HANDLERS ----------
     private void HandleSmallFish(SmallFish fish)
     {
-        fish.currentState = fish.hp <= fish.maxHp-(fish.maxHp/4) ? FishState.Hungry : FishState.Swim;
+        fish.currentState = fish.hp <= fish.maxHp - (fish.maxHp / 4) ? FishState.Hungry : FishState.Swim;
 
         for (int i = pellets.Count - 1; i >= 0; i--)
         {
@@ -127,9 +128,9 @@ public class AISystem
             {
                 Console.WriteLine("Basic fish eating pellet");
                 soundManager.PlaySound("FishEat");
-                fish.hp = Math.Clamp(fish.hp + 25, 0,100); 
+                fish.hp = Math.Clamp(fish.hp + 25, 0, 100);
                 pellets.RemoveAt(i);
-                break; 
+                break;
             }
         }
     }
@@ -173,7 +174,7 @@ public class AISystem
         {
             fish.currentState = FishState.Hungry;
 
-            Fish prey = Fish.FindNearestPrey(fish, fishes);
+            Fish prey = FindNearestPrey(fish, fishes);
 
             if (prey != null)
             {
@@ -223,6 +224,7 @@ public class AISystem
         }
     }
 
+    // ---------- FIND ----------
     private T FindNearestPellet<T>(Fish fish) where T : FoodPellets
     {
         T closest = null;
@@ -244,26 +246,29 @@ public class AISystem
         return closest;
     }
 
-    private Fish FindNearestPrey(CarnivoreFish predator)
-    {
-        Fish closest = null;
-        float minDist = float.MaxValue;
-
-        foreach (var fish in fishes)
+    public static Fish FindNearestPrey(CarnivoreFish predator, List<Fish> fishes)
         {
-            if (fish is SmallFish basic && !basic.isAdult)
+            Fish closest = null;
+            float minDist = float.MaxValue;
+
+            foreach (var fish in fishes)
             {
-                float dist = Vector2.Distance(new Vector2(predator.x, predator.y), new Vector2(basic.x, basic.y));
-                if (dist < minDist)
+                if (fish is SmallFish basic && !basic.isAdult)
                 {
-                    minDist = dist;
-                    closest = basic;
+                    float dist = Vector2.Distance(
+                        new Vector2(predator.x, predator.y),
+                        new Vector2(basic.x, basic.y)
+                    );
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        closest = basic;
+                    }
                 }
             }
-        }
 
-        return closest;
-    }
+            return closest;
+        }
 
     private Poop FindNearestPoop(Fish fish)
     {
