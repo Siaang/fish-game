@@ -44,7 +44,6 @@ public class AISystem
             {
                 fish.isDead = true;
                 fish.Dead();
-                soundManager.PlaySound("die");
             }
             else
             {

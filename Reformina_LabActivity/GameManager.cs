@@ -8,13 +8,15 @@ public class GameManager
     private int screenWidth;
     private int screenHeight;
 
+    private float gameTimer = 0f;
     private int money = 0;
     private int aliveFishCount = 0;
+    private bool isGameOver = false;
     public List<Fish> fishes = new List<Fish>();
     public List<Coin> coins = new List<Coin>();
     public List<FoodPellets> pellets = new List<FoodPellets>();
 
-    private float cleanliness = 100f;
+    private float cleanliness;
     private HashSet<Fish> deadFishAlreadyCounted = new HashSet<Fish>(); //Store the dead fish + prevents it from counting the same fish twice
 
     // Managers
@@ -39,10 +41,12 @@ public class GameManager
         if (fishTextures != null) fishTextures.Dispose();
         if (soundManager != null) soundManager.Dispose();
 
-        money = 150;
+        money = 100;
         fishes = new List<Fish>();
         coins = new List<Coin>();
         pellets = new List<FoodPellets>();
+        cleanliness = 100f;
+        gameTimer = 0f;
 
         // Load UI Texture Manager
         uiTextures = new UITextureHandler();
@@ -68,6 +72,12 @@ public class GameManager
 
     public void Update()
     {
+        // Timer
+        float deltaTime = Raylib.GetFrameTime();
+        
+        if (!isGameOver)
+            gameTimer += deltaTime;
+
         soundManager.Update();
 
         float x = Raylib.GetRandomValue(0, screenWidth - 50);
@@ -77,11 +87,18 @@ public class GameManager
         aliveFishCount = 0;
         foreach (var fish in fishes)
         {
+            
             if (!fish.isDead) aliveFishCount++;
         }
-        if ((aliveFishCount == 0) && Raylib.IsKeyPressed(KeyboardKey.R))
+        if ((aliveFishCount == 0))
         {
-            newGame();
+            isGameOver = true;
+
+            if (Raylib.IsKeyPressed(KeyboardKey.R))
+            {
+                newGame();
+                isGameOver = false;
+            }
         }
 
         // Input: buy fish
@@ -198,12 +215,15 @@ public class GameManager
 
     public void Draw()
     {
+        // Timer 
+        int minutes = (int)(gameTimer / 60);
+        int seconds = (int)(gameTimer % 60);
         // Game over 
         if (aliveFishCount == 0)
         {
             Raylib.DrawRectangle(0, 0, screenWidth, screenHeight, Color.White);
-            Raylib.DrawText("Game over! Press R To restart",
-                screenWidth - 750, screenHeight / 2, 40, Color.Red);
+            Raylib.DrawText($"Game over! Press R To restart\n        Your time was {minutes}:{seconds}",
+                130, 250, 40, Color.Red);
 
             return;
         }
@@ -218,7 +238,8 @@ public class GameManager
         foreach (var coin in coins) coin.Draw();
 
         // Draw UI
-        Raylib.DrawText($"Tank Cleanliness: {cleanliness}%", 10, 10, 20, Color.White);
+        Raylib.DrawText($"Time: {minutes}:{seconds}", 10, 10, 20, Color.White);
+        Raylib.DrawText($"Tank Cleanliness: {cleanliness}%", 10, 30, 20, Color.White);
         Raylib.DrawText($"Money: {money}", screenWidth - 140, screenHeight - 20, 20, Color.White);
         Raylib.DrawTexture(uiTextures.SmallFishIcon, 10, screenHeight - 50, Color.White);
         Raylib.DrawTexture(uiTextures.MediumFishIcon, 50, screenHeight - 50, Color.White);

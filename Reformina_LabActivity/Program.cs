@@ -13,6 +13,7 @@ class Program
     {
         WindowSize gameSize = new WindowSize { width = 900, height = 600 };
         Raylib.InitWindow(gameSize.width, gameSize.height, "Insaniquarium Clone");
+        Raylib.InitAudioDevice();
         Raylib.SetTargetFPS(60);
 
         GameManager game = new GameManager(gameSize.width, gameSize.height);
