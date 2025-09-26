@@ -103,6 +103,7 @@ public class AISystem
             // ---------- POOP DROP ----------
             if (fish.poopTimer <= 0 && !fish.isDead)
             {
+                gameManager.poopCount += 1f;
                 soundManager.PlaySound("poop");
                 coins.Add(new Poop(fish.x, fish.y));
                 fish.poopTimer = 10f + (float)new Random().NextDouble() * 3f;
@@ -276,6 +277,7 @@ public class AISystem
         }
 
         Poop targetPoop = fish.currentTargetPoop;
+
         fish.currentState = FishState.Hungry;
         fish.MoveTowards(targetPoop.X, targetPoop.Y, 60f);
 
@@ -283,9 +285,13 @@ public class AISystem
         {
             soundManager.PlaySound("FishEat");
             Console.WriteLine("JanitorFish ate poop!");
+
             coins.Add(new SilverCoin(fish.x, fish.y));
+
             coins.Remove(targetPoop);
+
             fish.hp = Math.Clamp(fish.hp + 10, 0, fish.maxHp);
+            gameManager.cleanliness = Math.Min(100f, gameManager.cleanliness + 1f);
 
             fish.currentTargetPoop = null;
         }

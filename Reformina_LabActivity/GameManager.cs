@@ -15,6 +15,7 @@ public class GameManager
     public List<Fish> fishes = new List<Fish>();
     public List<Coin> coins = new List<Coin>();
     public List<FoodPellets> pellets = new List<FoodPellets>();
+    public float poopCount;
 
     public float cleanliness;
     public HashSet<Fish> deadFishAlreadyCounted = new HashSet<Fish>(); //Store the dead fish + prevents it from counting the same fish twice
@@ -45,7 +46,7 @@ public class GameManager
         fishes = new List<Fish>();
         coins = new List<Coin>();
         pellets = new List<FoodPellets>();
-        cleanliness = 100f;
+        cleanliness = 10f;
         gameTimer = 0f;
 
         // Load UI Texture Manager
@@ -74,6 +75,8 @@ public class GameManager
     {
         // Timer
         float deltaTime = Raylib.GetFrameTime();
+
+        UpdateCleanliness();
         
         if (!isGameOver)
             gameTimer += deltaTime;
@@ -90,7 +93,7 @@ public class GameManager
             
             if (!fish.isDead) aliveFishCount++;
         }
-        if ((aliveFishCount == 0))
+        if (aliveFishCount == 0 || cleanliness <= 0)
         {
             isGameOver = true;
 
@@ -205,12 +208,24 @@ public class GameManager
                 deadFishAlreadyCounted.Add(fish);
             }
         }
-
+        
         // If cleanliness is less than 40% it'll degrade the fish's hp faster 
         if (cleanliness <= 40)
         {
             aiSystem.HealthDrain();
         }
+    }
+
+    public void UpdateCleanliness()
+    {
+
+        if (poopCount > 0)
+        {
+            cleanliness -= poopCount * 1f; 
+            poopCount = 0; 
+        }
+
+        cleanliness = Math.Clamp(cleanliness, 0, 100f); 
     }
 
     public void Draw()
@@ -219,7 +234,7 @@ public class GameManager
         int minutes = (int)(gameTimer / 60);
         int seconds = (int)(gameTimer % 60);
         // Game over 
-        if (aliveFishCount == 0)
+        if (aliveFishCount == 0 || cleanliness <= 0)
         {
             Raylib.DrawRectangle(0, 0, screenWidth, screenHeight, Color.White);
             Raylib.DrawText($"Game over! Press R To restart\n        Your time was {minutes}:{seconds}",
