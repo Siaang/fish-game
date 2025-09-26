@@ -1,7 +1,5 @@
 using Raylib_cs;
 using System.Numerics;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 
 public class GameManager
 {
@@ -128,7 +126,7 @@ public class GameManager
 
         if (Raylib.IsKeyPressed(KeyboardKey.Four) && money >= 300)
         {
-            fishes.Add(new JanitorFish(x, y));
+            fishes.Add(new JanitorFish(x, 100));
             money -= 300;
             soundManager.PlaySound("buyFish");
         }

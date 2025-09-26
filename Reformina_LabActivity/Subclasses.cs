@@ -1,27 +1,24 @@
-using System;
-using System.Numerics;
 using Raylib_cs;
-using System.Collections.Generic;
 
 // ---------- BRONZE COIN -----------
 class BronzeCoin : Coin
 {
     public BronzeCoin(float x, float y)
-        : base("assets/coin_bronze.png", x, y, 20) { }
+        : base("assets/coin_bronze.png", x, y, 30) { }
 }
 
 // ---------- SILVER COIN -----------
 class SilverCoin : Coin
 {
     public SilverCoin(float x, float y)
-        : base("assets/coin_silver.png", x, y, 30) { }   
+        : base("assets/coin_silver.png", x, y, 50) { }   
 }
 
 // ---------- GOLD COIN -----------
 class GoldCoin : Coin
 {
     public GoldCoin(float x, float y)
-        : base("assets/coin_gold.png", x, y, 60) { }
+        : base("assets/coin_gold.png", x, y, 80) { }
 }
 
 public class Poop : Coin
@@ -101,7 +98,7 @@ public class CarnivoreFish : Fish
     public CarnivoreFish(float startX, float startY)
         : base(textureHandler!.GetRandomTexture("CarnivoreFish"), startX, startY)
     {
-        maxHp = 110;
+        maxHp = 30;
         hp = maxHp;
         lifespan = 140f;
     }
@@ -124,7 +121,7 @@ public class JanitorFish : Fish
     {
         maxHp = 90;
         hp = maxHp;
-        lifespan = 160f;
+        lifespan = 20f;
     }
 }
 
@@ -146,7 +143,7 @@ public class AlphaFish : Fish
     {
         maxHp = 110;
         hp = maxHp;
-        lifespan = 25f;
+        lifespan = 30f;
     }
     private int eatenFishCount = 0;
 

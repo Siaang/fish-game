@@ -1,5 +1,4 @@
 using Raylib_cs;
-using System;
 using System.Numerics;
 public enum FishState
 {
@@ -58,6 +57,9 @@ public class AISystem
             // ---------- GROWTH ----------
             if (!fish.isDead)
             {
+                if (fish.isDead)
+                    continue; 
+
                 fish.Move(pellets);
 
                 if (fish.isAdult && fish.coinTimer <= 0)
@@ -265,6 +267,8 @@ public class AISystem
 
     private void HandleJanitor(JanitorFish fish)
     {
+        if (fish.isDead) return;
+
         if (fish.currentTargetPoop == null || !coins.Contains(fish.currentTargetPoop))
         {
             fish.currentTargetPoop = FindNearestPoop(fish);

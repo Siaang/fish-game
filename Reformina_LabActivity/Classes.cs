@@ -1,6 +1,5 @@
-using System;
-using System.Numerics;
 using Raylib_cs;
+using System.Numerics;
 
 // ---------- COINS TEMPLATE ----------
 public class Coin
