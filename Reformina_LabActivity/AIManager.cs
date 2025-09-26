@@ -13,13 +13,15 @@ public class AISystem
     private List<FoodPellets> pellets;
     private List<Coin> coins;
     private SoundManager soundManager;
+    private GameManager gameManager;
 
-    public AISystem(List<Fish> fishes, List<FoodPellets> pellets, List<Coin> coins, SoundManager soundManager)
+    public AISystem(List<Fish> fishes, List<FoodPellets> pellets, List<Coin> coins, SoundManager soundManager, GameManager gameManager)
     {
         this.fishes = fishes;
         this.pellets = pellets;
         this.coins = coins;
         this.soundManager = soundManager;
+        this.gameManager = gameManager;
     }
 
     public void Update(List<Fish> fishes, List<Coin> coins, List<FoodPellets> pellets)
@@ -179,7 +181,6 @@ public class AISystem
         }
     }
 
-
     private void HandleCarnivore(CarnivoreFish fish, float deltaTime, List<Fish> fishes)
     {
         fish.hungerTimer -= deltaTime;
@@ -204,7 +205,17 @@ public class AISystem
                 {
                     soundManager.PlaySound("FishEat");
                     fish.hp = Math.Clamp(fish.hp + 50, 0, fish.maxHp);
+
+                    if (prey.isDead) 
+                    {
+                        gameManager.cleanliness += 2f;
+                        if (gameManager.cleanliness > 100f) gameManager.cleanliness = 100f;
+
+                        gameManager.deadFishAlreadyCounted.Remove(prey);
+                    }
+
                     fishes.Remove(prey);
+
                     fish.hungerTimer = 15f;
                 }
             }
@@ -230,14 +241,19 @@ public class AISystem
             if (alpha.IsCollidingWith(prey))
             {
                 soundManager.PlaySound("FishEat");
-
                 alpha.hp = Math.Clamp(alpha.hp + 30, 0, alpha.maxHp);
-
                 alpha.AddEatenFish();
 
-                coins.Add(new GoldCoin(alpha.x, alpha.y));
+                if (prey.isDead)
+                {
+                    gameManager.cleanliness += 2f;
+                    if (gameManager.cleanliness > 100f) gameManager.cleanliness = 100f;
+
+                    gameManager.deadFishAlreadyCounted.Remove(prey);
+                }
 
                 fishes.Remove(prey);
+                coins.Add(new GoldCoin(alpha.x, alpha.y));
             }
         }
         else

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 class BronzeCoin : Coin
 {
     public BronzeCoin(float x, float y)
-        : base("assets/coin_bronze.png", x, y, 500) { }
+        : base("assets/coin_bronze.png", x, y, 300) { }
 }
 
 // ---------- SILVER COIN -----------
@@ -65,7 +65,7 @@ class SmallFish : Fish
     {
         maxHp = 50;
         hp = maxHp;
-        lifespan = 80f;
+        lifespan = 10f;
     }
 }
 

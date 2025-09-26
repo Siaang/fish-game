@@ -16,8 +16,8 @@ public class GameManager
     public List<Coin> coins = new List<Coin>();
     public List<FoodPellets> pellets = new List<FoodPellets>();
 
-    private float cleanliness;
-    private HashSet<Fish> deadFishAlreadyCounted = new HashSet<Fish>(); //Store the dead fish + prevents it from counting the same fish twice
+    public float cleanliness;
+    public HashSet<Fish> deadFishAlreadyCounted = new HashSet<Fish>(); //Store the dead fish + prevents it from counting the same fish twice
 
     // Managers
     private UITextureHandler uiTextures;
@@ -64,7 +64,7 @@ public class GameManager
         soundManager.LoadAudio();
 
         // AI 
-        aiSystem = new AISystem(fishes, pellets, coins, soundManager);
+        aiSystem = new AISystem(fishes, pellets, coins, soundManager, this);
 
         // Start with one fish
         fishes.Add(new SmallFish(400, 300));
