@@ -46,7 +46,7 @@ public class GameManager
         fishes = new List<Fish>();
         coins = new List<Coin>();
         pellets = new List<FoodPellets>();
-        cleanliness = 10f;
+        cleanliness = 100f;
         gameTimer = 0f;
 
         // Load UI Texture Manager
