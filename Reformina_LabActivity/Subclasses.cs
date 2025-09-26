@@ -7,7 +7,7 @@ using System.Collections.Generic;
 class BronzeCoin : Coin
 {
     public BronzeCoin(float x, float y)
-        : base("assets/coin_bronze.png", x, y, 20) { }
+        : base("assets/coin_bronze.png", x, y, 500) { }
 }
 
 // ---------- SILVER COIN -----------
@@ -21,7 +21,7 @@ class SilverCoin : Coin
 class GoldCoin : Coin
 {
     public GoldCoin(float x, float y)
-        : base("assets/coin_gold.png", x, y, 50) { }
+        : base("assets/coin_gold.png", x, y, 60) { }
 }
 
 public class Poop : Coin
@@ -125,6 +125,41 @@ public class JanitorFish : Fish
         maxHp = 90;
         hp = maxHp;
         lifespan = 160f;
+    }
+}
+
+// ---------- ALPHA FISH ----------
+public class AlphaFish : Fish
+{
+    private static FishTextureHandler? textureHandler;
+
+    private int fishEatenCount = 0;
+
+
+    public static void SetTextureHandler(FishTextureHandler handler)
+    {
+        textureHandler = handler;
+    }
+
+    public AlphaFish(float startX, float startY)
+        : base(textureHandler!.GetRandomTexture("AlphaFish"), startX, startY)
+    {
+        maxHp = 110;
+        hp = maxHp;
+        lifespan = 30f;
+    }
+    private int eatenFishCount = 0;
+
+    public void AddEatenFish()
+    {
+        eatenFishCount++;
+    }
+
+    public int EatenCount => eatenFishCount;
+
+    public void ResetEatenCount()
+    {
+        eatenFishCount = 0;
     }
 }
 

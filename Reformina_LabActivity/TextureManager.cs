@@ -9,6 +9,7 @@ public class UITextureHandler
     public Texture2D MediumFishIcon { get; private set; }
     public Texture2D CarnivoreFishIcon { get; private set; }
     public Texture2D JanitorFishIcon { get; private set; }
+    public Texture2D AlphaFishIcon { get; private set; }
 
     // Pellets
     public Texture2D greenPelletIcon { get; private set; }
@@ -22,6 +23,7 @@ public class UITextureHandler
         MediumFishIcon = Raylib.LoadTexture("assets/mediumFish_buy.png");
         CarnivoreFishIcon = Raylib.LoadTexture("assets/largeFish_buy.png");
         JanitorFishIcon = Raylib.LoadTexture("assets/janitorFish_buy.png");
+        AlphaFishIcon = Raylib.LoadTexture("assets/massiveFish_buy.png");
 
         greenPelletIcon = Raylib.LoadTexture("assets/greenPelletIcon.png");
         redPelletIcon = Raylib.LoadTexture("assets/redPelletIcon.png");
@@ -34,6 +36,7 @@ public class UITextureHandler
         Raylib.UnloadTexture(MediumFishIcon);
         Raylib.UnloadTexture(CarnivoreFishIcon);
         Raylib.UnloadTexture(JanitorFishIcon);
+        Raylib.UnloadTexture(AlphaFishIcon);
 
         Raylib.UnloadTexture(greenPelletIcon);
         Raylib.UnloadTexture(redPelletIcon);
@@ -67,6 +70,11 @@ public class FishTextureHandler
         //JanitorFish sprite
         fishTextures["JanitorFish"] = new Texture2D[] {
             Raylib.LoadTexture("assets/janitor_fish.png")
+        };
+
+        //AlphaFish Sprite
+        fishTextures["AlphaFish"] = new Texture2D[] {
+            Raylib.LoadTexture("assets/massive_fish.png")
         };
     }
 

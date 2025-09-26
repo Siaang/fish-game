@@ -122,11 +122,11 @@ public class Fish
         }
     }
 
+     // ---------- MOVEMENTS --------
     public virtual void Move(List<FoodPellets> pellets)
     {
         switch (currentState)
         {
-            // ---------- MOVE RANDOMLY --------
             case FishState.Swim:
                 float swimSpeed = 40f * Raylib.GetFrameTime();
                 x += swimSpeed * direction;
@@ -197,6 +197,7 @@ public class Fish
         }
     }
 
+    // d i e
     public void Dead()
     {
         hp = 0;
@@ -212,6 +213,7 @@ public class Fish
         }
     }
 
+    // ---------- TARGETS --------
     public void MoveTowards(float targetX, float targetY, float speed)
     {
         Vector2 currentPos = new Vector2(x, y);
@@ -230,7 +232,7 @@ public class Fish
         }
     }
 
-    protected virtual FoodPellets FindNearestPellet(List<FoodPellets> pellets)
+     protected virtual FoodPellets FindNearestPellet(List<FoodPellets> pellets)
     {
         FoodPellets closest = null;
         float minDist = float.MaxValue;

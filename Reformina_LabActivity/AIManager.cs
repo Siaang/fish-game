@@ -26,11 +26,12 @@ public class AISystem
     {
         float deltaTime = Raylib.GetFrameTime();
 
+        // ---------- AGE AND HP ----------
         for (int i = fishes.Count - 1; i >= 0; i--)
         {
             Fish fish = fishes[i];
 
-            // Age and HP decay
+
             fish.age += deltaTime;
             fish.hpTimer -= deltaTime;
             if (fish.hpTimer <= 0)
@@ -53,12 +54,12 @@ public class AISystem
                     fish.currentState = FishState.Swim;
             }
 
-            // Growth
-         if (!fish.isDead)
-        {
-            fish.Move(pellets);
+            // ---------- GROWTH ----------
+            if (!fish.isDead)
+            {
+                fish.Move(pellets);
 
-            if (fish.isAdult && fish.coinTimer <= 0)
+                if (fish.isAdult && fish.coinTimer <= 0)
                 {
                     coins.Add(new GoldCoin(fish.x, fish.y));
                     soundManager.PlaySound("drop");
@@ -80,21 +81,37 @@ public class AISystem
                 {
                     fish.coinTimer -= deltaTime;
                 }
-        }
 
-            // Poop drop
+                if (fish.hp <= 0 || fish.age >= fish.lifespan)
+                {
+                    // If AlphaFish, drop coins here before marking dead
+                    if (fish is AlphaFish alphaDead)
+                    {
+                        DropAlphaCoins(alphaDead);
+                    }
+
+                    fish.isDead = true;
+                    fish.Dead();
+                    soundManager.PlaySound("die");
+
+                    // Skip this fish entirely
+                    continue;
+                }
+            }
+
+            // ---------- POOP DROP ----------
             if (fish.poopTimer <= 0 && !fish.isDead)
             {
                 soundManager.PlaySound("poop");
-                coins.Add(new Poop(fish.x, fish.y)); 
-                fish.poopTimer = 10f + (float)new Random().NextDouble() * 3f; 
+                coins.Add(new Poop(fish.x, fish.y));
+                fish.poopTimer = 10f + (float)new Random().NextDouble() * 3f;
             }
             else
             {
                 fish.poopTimer -= deltaTime;
             }
 
-            // AI Behavior
+            // ---------- SWITCH CASE: HANDLER ----------
             switch (fish)
             {
                 case SmallFish basic:
@@ -104,13 +121,17 @@ public class AISystem
                 case MediumFish basic:
                     HandleMediumFish(basic);
                     break;
-                
+
                 case CarnivoreFish carnivore:
                     HandleCarnivore(carnivore, deltaTime, fishes);
                     break;
 
                 case JanitorFish janitor:
                     HandleJanitor(janitor);
+                    break;
+
+                case AlphaFish alpha:
+                    HandleAlpha(alpha, deltaTime, fishes);
                     break;
             }
         }
@@ -137,7 +158,7 @@ public class AISystem
 
     private void HandleMediumFish(MediumFish fish)
     {
-        fish.currentState = fish.hp <= fish.maxHp-(fish.maxHp/4) ? FishState.Hungry : FishState.Swim;
+        fish.currentState = fish.hp <= fish.maxHp - (fish.maxHp / 4) ? FishState.Hungry : FishState.Swim;
 
         if (!fish.isAdult && fish.age >= 60f)
         {
@@ -158,7 +179,7 @@ public class AISystem
             }
         }
     }
-    
+
 
     private void HandleCarnivore(CarnivoreFish fish, float deltaTime, List<Fish> fishes)
     {
@@ -195,6 +216,37 @@ public class AISystem
         }
     }
 
+    private void HandleAlpha(AlphaFish alpha, float deltaTime, List<Fish> fishes)
+    {
+        if (alpha.isDead) return; 
+
+        alpha.currentState = FishState.Hungry;
+
+        Fish prey = FindNearestPreyAlpha(alpha, fishes);
+
+        if (prey != null)
+        {
+            alpha.MoveTowards(prey.x, prey.y, 90f);
+
+            if (alpha.IsCollidingWith(prey))
+            {
+                soundManager.PlaySound("FishEat");
+
+                alpha.hp = Math.Clamp(alpha.hp + 30, 0, alpha.maxHp);
+
+                alpha.AddEatenFish();
+
+                coins.Add(new GoldCoin(alpha.x, alpha.y));
+
+                fishes.Remove(prey);
+            }
+        }
+        else
+        {
+            alpha.currentState = FishState.Swim;
+        }
+    }
+
     private void HandleJanitor(JanitorFish fish)
     {
         if (fish.currentTargetPoop == null || !coins.Contains(fish.currentTargetPoop))
@@ -225,7 +277,7 @@ public class AISystem
     }
 
     // ---------- FIND ----------
-    private T FindNearestPellet<T>(Fish fish) where T : FoodPellets
+    public T FindNearestPellet<T>(Fish fish) where T : FoodPellets
     {
         T closest = null;
         float minDist = float.MaxValue;
@@ -247,28 +299,53 @@ public class AISystem
     }
 
     public static Fish FindNearestPrey(CarnivoreFish predator, List<Fish> fishes)
-        {
-            Fish closest = null;
-            float minDist = float.MaxValue;
+    {
+        Fish closest = null;
+        float minDist = float.MaxValue;
 
-            foreach (var fish in fishes)
+        foreach (var fish in fishes)
+        {
+            if (fish is SmallFish basic && !basic.isAdult)
             {
-                if (fish is SmallFish basic && !basic.isAdult)
+                float dist = Vector2.Distance(
+                    new Vector2(predator.x, predator.y),
+                    new Vector2(basic.x, basic.y)
+                );
+                if (dist < minDist)
                 {
-                    float dist = Vector2.Distance(
-                        new Vector2(predator.x, predator.y),
-                        new Vector2(basic.x, basic.y)
-                    );
-                    if (dist < minDist)
-                    {
-                        minDist = dist;
-                        closest = basic;
-                    }
+                    minDist = dist;
+                    closest = basic;
                 }
             }
-
-            return closest;
         }
+
+        return closest;
+    }
+
+    private Fish FindNearestPreyAlpha(AlphaFish predator, List<Fish> fishes)
+    {
+        Fish closest = null;
+        float minDist = float.MaxValue;
+
+        foreach (var fish in fishes)
+        {
+            // AlphaFish can eat anything except itself
+            if (fish != predator && !(fish is AlphaFish))
+            {
+                float dist = Vector2.Distance(
+                    new Vector2(predator.x, predator.y),
+                    new Vector2(fish.x, fish.y)
+                );
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    closest = fish;
+                }
+            }
+        }
+
+        return closest;
+    }
 
     private Poop FindNearestPoop(Fish fish)
     {
@@ -290,4 +367,34 @@ public class AISystem
 
         return closest;
     }
+
+    // ---------- HEALTH DRAIN ----------
+    public void HealthDrain()
+    {
+        foreach (var fish in fishes)
+        {
+            float deltaTime = Raylib.GetFrameTime();
+
+            if (!fish.isDead)
+            {
+                fish.hp -= 0.2f * deltaTime;
+            }
+        }
+    }
+
+    // ---------- ALPHA COIN DROP ----------
+    private void DropAlphaCoins(AlphaFish alpha)
+    {
+        int eatenCount = alpha.EatenCount; 
+
+        for (int i = 0; i < eatenCount; i++)
+        {
+            coins.Add(new GoldCoin(alpha.x, alpha.y));
+        }
+
+        alpha.ResetEatenCount();
+    }
+
 }
+
+ 

@@ -9,9 +9,13 @@ public class GameManager
     private int screenHeight;
 
     private int money = 0;
+    private int aliveFishCount = 0;
     public List<Fish> fishes = new List<Fish>();
     public List<Coin> coins = new List<Coin>();
     public List<FoodPellets> pellets = new List<FoodPellets>();
+
+    private float cleanliness = 100f;
+    private HashSet<Fish> deadFishAlreadyCounted = new HashSet<Fish>(); //Store the dead fish + prevents it from counting the same fish twice
 
     // Managers
     private UITextureHandler uiTextures;
@@ -33,9 +37,9 @@ public class GameManager
         // Dispose old maangers
         if (uiTextures != null) uiTextures.Dispose();
         if (fishTextures != null) fishTextures.Dispose();
-        if (soundManager != null) soundManager.Dispose(); 
+        if (soundManager != null) soundManager.Dispose();
 
-        money = 100;
+        money = 150;
         fishes = new List<Fish>();
         coins = new List<Coin>();
         pellets = new List<FoodPellets>();
@@ -49,6 +53,7 @@ public class GameManager
         MediumFish.SetTextureHandler(fishTextures);
         CarnivoreFish.SetTextureHandler(fishTextures);
         JanitorFish.SetTextureHandler(fishTextures);
+        AlphaFish.SetTextureHandler(fishTextures);
 
         // Sound
         soundManager = new SoundManager();
@@ -68,8 +73,13 @@ public class GameManager
         float x = Raylib.GetRandomValue(0, screenWidth - 50);
         float y = Raylib.GetRandomValue(100, screenHeight - 100);
 
-        // Game over
-        if ((money <= 0 || fishes.Count == 0) && Raylib.IsKeyPressed(KeyboardKey.R))
+        // Game over    
+        aliveFishCount = 0;
+        foreach (var fish in fishes)
+        {
+            if (!fish.isDead) aliveFishCount++;
+        }
+        if ((aliveFishCount == 0) && Raylib.IsKeyPressed(KeyboardKey.R))
         {
             newGame();
         }
@@ -100,6 +110,13 @@ public class GameManager
         {
             fishes.Add(new JanitorFish(x, y));
             money -= 300;
+            soundManager.PlaySound("buyFish");
+        }
+
+        if (Raylib.IsKeyPressed(KeyboardKey.Five) && money >= 400)
+        {
+            fishes.Add(new AlphaFish(x, y));
+            money -= 400;
             soundManager.PlaySound("buyFish");
         }
 
@@ -160,12 +177,29 @@ public class GameManager
                 pellets.RemoveAt(i);
             }
         }
+
+        // Tank cleanliness 
+        foreach (var fish in fishes)
+        {
+            if (fish.isDead && !deadFishAlreadyCounted.Contains(fish))
+            {
+                cleanliness -= 2f;
+                if (cleanliness < 0f) cleanliness = 0f;
+                deadFishAlreadyCounted.Add(fish);
+            }
+        }
+
+        // If cleanliness is less than 40% it'll degrade the fish's hp faster 
+        if (cleanliness <= 40)
+        {
+            aiSystem.HealthDrain();
+        }
     }
 
     public void Draw()
     {
         // Game over 
-        if (fishes.Count == 0)
+        if (aliveFishCount == 0)
         {
             Raylib.DrawRectangle(0, 0, screenWidth, screenHeight, Color.White);
             Raylib.DrawText("Game over! Press R To restart",
@@ -184,11 +218,13 @@ public class GameManager
         foreach (var coin in coins) coin.Draw();
 
         // Draw UI
+        Raylib.DrawText($"Tank Cleanliness: {cleanliness}%", 10, 10, 20, Color.White);
         Raylib.DrawText($"Money: {money}", screenWidth - 140, screenHeight - 20, 20, Color.White);
         Raylib.DrawTexture(uiTextures.SmallFishIcon, 10, screenHeight - 50, Color.White);
         Raylib.DrawTexture(uiTextures.MediumFishIcon, 50, screenHeight - 50, Color.White);
         Raylib.DrawTexture(uiTextures.CarnivoreFishIcon, 120, screenHeight - 70, Color.White);
         Raylib.DrawTexture(uiTextures.JanitorFishIcon, 200, screenHeight - 60, Color.White);
+        Raylib.DrawTexture(uiTextures.AlphaFishIcon, 280, screenHeight - 65, Color.White);
 
         Raylib.DrawTexture(uiTextures.greenPelletIcon, 790, 520, Color.White);
         Raylib.DrawTexture(uiTextures.redPelletIcon, 840, 520, Color.White);
